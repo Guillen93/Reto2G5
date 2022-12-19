@@ -1,0 +1,79 @@
+﻿@page "/"
+@using System.ComponentModel.DataAnnotations
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Index</PageTitle>
+
+
+<div >
+   
+
+<div class="container">
+    <div class="row align-items-start">
+        <div class="col"> </div>
+        <div class="col">
+            <div class="text-center">
+                <p><img src="css/img/logoDI.png" /></p>
+            </div>
+        
+        </div>
+        <div class="col">3 </div>
+    </div>
+    <div class="row align-items-center">
+        <div class="col"></div>
+        <div class="col">
+                <EditForm Model=model OnValidSubmit="SumitForm" OnInvalidSubmit="invalidSumitForm">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div>
+                        <p>
+                            <label for="nombre">User:</label>
+                            <InputText @bind-Value=model.nombre id="nombre" class="form-control" size=40 style="width:500px " />
+                            <ValidationMessage For=@(()=>model.nombre) />
+                        </p>
+                    </div>
+
+                    <div>
+                        <p>
+                            <label for="email">PassWord:</label>
+                            <InputText @bind-Value=model.password id="password" type="password" class="form-control" size=40 style="width:500px" />
+                            <ValidationMessage For=@(()=>model.password) />
+                        </p>
+                    </div>
+
+                    <div class="row align-items-end">
+                        <div class="col"></div>
+                        <div class="col">
+                            <button class="btn btn-danger" style="width:150px">Ir</button>
+                        </div>
+                        <div class="col"></div>
+                    </div>
+                </EditForm>
+            </div>
+        <div class="col"> </div>
+    </div>
+    
+</div>
+
+</div>
+
+@code {
+    TestModel model = new TestModel();
+    class TestModel
+    {
+        [Required(ErrorMessage = "el campo no puede estar vacio"), MaxLength(20, ErrorMessage = "maximo 20 caracteres"), MinLength(5, ErrorMessage = "minimo 5 caracteres")]
+        public string? nombre { get; set; }
+        [DataType(DataType.Password), Required(ErrorMessage = "el campo no puede estar vacio")]
+        public string? password { get; set; }
+
+      
+    }
+    
+
+    void SumitForm()
+    { }
+
+    void invalidSumitForm()
+    { }
+
+    }
