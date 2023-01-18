@@ -1,7 +1,7 @@
 ﻿using Reto2G5.Model;
 using System.Reflection.Metadata.Ecma335;
 
-namespace DanielGuillenSanta
+namespace Reto2G5
 {
     public class Endpoints
     {
@@ -16,6 +16,12 @@ namespace DanielGuillenSanta
         //    return userResponse;
 
         //}
+
+
+        public static string Login()
+        {
+            return "http://localhost:8082/api/users/login";
+        }
         public static string GetUsers()
         {
 

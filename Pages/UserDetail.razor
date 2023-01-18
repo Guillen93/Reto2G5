@@ -1,10 +1,12 @@
 ﻿@page "/fetchuserdetails"
 @using Reto2G5.Model;
+
 @inject HttpClient Http
 
 
+
 <h1>User Data</h1>
-<p>Blazor CRUD operation</p>
+<p></p>
 <div class="row">
     <div class="col-md-6">
         <a href='/user/add' class="btn btn-primary" role="button">
@@ -43,6 +45,7 @@ else
                     <th>E-mail</th>*@
                 <th>dni</th>
                 <th>enabled</th>
+               
                 </tr>
             </thead>
             <tbody>
@@ -51,7 +54,8 @@ else
                         <tr>
                             <td>@user.dni</td>
                             <td>@user.isEnabled</td>
-                           @* <td>@user.Userid</td>
+                           <td></td>
+                    @* <td>@user.Userid</td>
                             <td>@user.Username</td>
                             <td>@user.Address</td>
                             <td>@user.Cellnumber</td>
@@ -71,18 +75,24 @@ else
         </table>
 }
 @code {
+
     protected List<UserModel> userList = new();
     protected List<UserModel> searchUserData = new();
     protected UserModel user = new();
     protected string SearchString { get; set; } = string.Empty;
+    public string bearer = "Bearer " + Index.funciones.token;
     protected override async Task OnInitializedAsync()
     {
         await GetUser();
     }
     protected async Task GetUser()
     {
-        userList = await Http.GetFromJsonAsync<List<UserModel>>("http://192.168.1.244:8082/api/users");
-        searchUserData = userList;
+        Http.DefaultRequestHeaders.Add("Authorization", $"Bearer {@Index.funciones.token}");
+       
+        userList = await Http.GetFromJsonAsync<List<UserModel>>(Endpoints.GetUsers());
+     
+
+       searchUserData = userList;
     }
     protected void FilterUser()
     {

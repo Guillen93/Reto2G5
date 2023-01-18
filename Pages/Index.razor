@@ -1,6 +1,14 @@
 ﻿@page "/"
 @using System.ComponentModel.DataAnnotations
+@using Reto2G5.Model;
+@using System.Text.Json;
+@using System.Text.Json.Serialization;
+@using System.Net;
+@using System.Text;
+
+@inject HttpClient Http
 @inject IJSRuntime JSRuntime
+@inject NavigationManager NavManager
 
 <PageTitle>Index</PageTitle>
 
@@ -22,35 +30,38 @@
     <div class="row align-items-center">
         <div class="col"></div>
         <div class="col">
-                <EditForm Model=model OnValidSubmit="SumitForm" OnInvalidSubmit="invalidSumitForm">
+                <EditForm Model=userRequest OnValidSubmit="SumitForm" OnInvalidSubmit="invalidSumitForm">
                     <DataAnnotationsValidator />
                    
                     <div>
                         <p>
                             <label for="nombre">User:</label>
-                            <InputText @bind-Value=model.nombre id="nombre" class="form-control" size=40 style="width:500px " />
-                            <ValidationMessage For=@(()=>model.nombre) />
+                            <InputText @bind-Value=userRequest.dni id="nombre" class="form-control" size=40 style="width:500px " />
+                            <ValidationMessage For=@(()=>userRequest.dni) />
                         </p>
                     </div>
 
                     <div>
                         <p>
-                            <label for="email">PassWord:</label>
-                            <InputText @bind-Value=model.password id="password" type="password" class="form-control" size=40 style="width:500px" />
-                            <ValidationMessage For=@(()=>model.password) />
+                            <label for="password">PassWord:</label>
+                            <InputText @bind-Value=userRequest.password id="password" type="password" class="form-control" size=40 style="width:500px" />
+                            <ValidationMessage For=@(()=>userRequest.password) />
                         </p>
                     </div>
 
                     <div class="row align-items-end">
                         <div class="col"></div>
                         <div class="col">
-                            <button class="btn btn-danger" style="width:150px">Ir</button>
+                            <button class="btn btn-danger" style="width:150px" @onclick=login>Ir</button>
                         </div>
                         <div class="col"></div>
                     </div>
                 </EditForm>
             </div>
         <div class="col"> </div>
+            <p>@errorMessage</p>
+            <p>@userResponse.accessToken</p>
+          
     </div>
     
 </div>
@@ -58,20 +69,57 @@
 </div>
 
 @code {
-    TestModel model = new TestModel();
-    class TestModel
-    {
-        [Required(ErrorMessage = "el campo no puede estar vacio"), MaxLength(20, ErrorMessage = "maximo 20 caracteres"), MinLength(5, ErrorMessage = "minimo 5 caracteres")]
-        public string? nombre { get; set; }
-        [DataType(DataType.Password), Required(ErrorMessage = "el campo no puede estar vacio")]
-        public string? password { get; set; }
 
-      
+
+    UserRequest userRequest = new UserRequest();
+    UserResponse userResponse = new UserResponse();
+
+    String errorMessage;
+
+
+    async Task<UserResponse> login()
+    {
+
+
+        var response = await Http.PostAsJsonAsync<UserRequest>(Endpoints.Login(), userRequest);
+
+        if (response.IsSuccessStatusCode)
+        {
+
+            userResponse = JsonSerializer.Deserialize<UserResponse>(response.Content.ReadAsStringAsync().Result);
+            funciones.token = userResponse.accessToken;
+            NavManager.NavigateTo("/fetchuserdetails/");
+            return userResponse;
+
+        }
+        else
+        {
+
+            if (((int)response.StatusCode) == 401)
+            {
+                errorMessage = "Incorrect user or password";
+            }
+            else
+            {
+                errorMessage = "Something went wrong";
+            }
+        }
+        return null;
     }
-    
+
+    public static class funciones
+    {
+        
+        public static string token { get; set; } = string.Empty;
+
+
+    }
 
     void SumitForm()
-    { }
+    {
+        
+    
+    }
 
     void invalidSumitForm()
     { }
