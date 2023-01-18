@@ -10,7 +10,7 @@ namespace Reto2G5.Model
 
         public string password { get; set; }
 
-        private bool isEnabled { get; set; }
+        public bool isEnabled { get; set; }
 
     }
 }
