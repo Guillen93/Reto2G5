@@ -1,7 +1,12 @@
 ﻿@page "/fetchuserdetails"
 @using Reto2G5.Model;
+@using System.Net.Http.Headers;
 
 @inject HttpClient Http
+@using System.Text.Json;
+@using System.Text.Json.Serialization;
+@using System.Net;
+@using System.Text;
 
 
 
@@ -80,20 +85,55 @@ else
     protected List<UserModel> searchUserData = new();
     protected UserModel user = new();
     protected string SearchString { get; set; } = string.Empty;
-    public string bearer = "Bearer " + Index.funciones.token;
+    string? bearerToken = "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMDAwMDAwNFAiLCJpc3MiOiJBRFREQU0iLCJpYXQiOjE2NzQxNTE0MDUsImV4cCI6MTY3NDIzNzgwNSwidXNlckRuaSI6IjAwMDAwMDA0UCIsInJvbGVzIjpbeyJyb2xlSUQiOjMsInJvbGUiOiJTdHVkZW50In1dfQ.CihbhBgQPJPIoPqmRUx7RVcc_H66ix0R7B739PW_wDhjBHDHJv4n4UjXc_NmO9J9w8P0plnHPYh4Tsga23ZWaQ";
+
     protected override async Task OnInitializedAsync()
     {
         await GetUser();
     }
+
+    protected async Task GetUser2()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get,Endpoints.GetUsers());
+        request.Headers.Add("Authorization", bearerToken);
+        request.Headers.Add("Access-Control-Allow-Headers", "*");
+        var response = await Http.SendAsync(request);
+
+        if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    var apistring = await response.Content.ReadAsStringAsync();
+    
+                    userList = JsonSerializer.Deserialize<List<UserModel>>(apistring);
+                }
+        searchUserData = userList;
+    }
     protected async Task GetUser()
     {
-        Http.DefaultRequestHeaders.Add("Authorization", $"Bearer {@Index.funciones.token}");
-       
-        userList = await Http.GetFromJsonAsync<List<UserModel>>(Endpoints.GetUsers());
-     
 
-       searchUserData = userList;
+        //Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Index.funciones.token);
+
+        Http.DefaultRequestHeaders.Add("Authorization", $"Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMDAwMDAwNFAiLCJpc3MiOiJBRFREQU0iLCJpYXQiOjE2NzQxNTE0MDUsImV4cCI6MTY3NDIzNzgwNSwidXNlckRuaSI6IjAwMDAwMDA0UCIsInJvbGVzIjpbeyJyb2xlSUQiOjMsInJvbGUiOiJTdHVkZW50In1dfQ.CihbhBgQPJPIoPqmRUx7RVcc_H66ix0R7B739PW_wDhjBHDHJv4n4UjXc_NmO9J9w8P0plnHPYh4Tsga23ZWaQ");
+        userList = await Http.GetFromJsonAsync<List<UserModel>>(Endpoints.GetUsers());
+
+        searchUserData = userList;
     }
+
+    //protected async Task GetUser()
+    //{
+    //    var request = new HttpRequestMessage(HttpMethod.Get, Endpoints.GetUsers());
+    //    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer ", token);        
+    //    HttpResponseMessage response = await Http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+    //    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+    //    {
+    //        var apiString = await response.Content.ReadAsStringAsync();
+    //        //users = JsonConvert.DeserializeObject<List<Player>>(apiString);
+    //        userList = JsonSerializer.Deserialize<List<UserModel>>(apiString);
+    //    }
+    //    searchUserData = userList;
+    //}
+
+  
+
     protected void FilterUser()
     {
         if (!string.IsNullOrEmpty(SearchString))
