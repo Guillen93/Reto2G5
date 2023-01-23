@@ -64,7 +64,7 @@
                     <div class="row align-items-end">
                         <div class="col"></div>
                         <div class="col">
-                            <button class="btn btn-danger" style="width:150px" >Ir</button>
+                            <button class="btn btn-danger" style="width:150px" @onclick="createUser">Ir</button>
                         </div>
                         <div class="col"></div>
                     </div>
@@ -81,7 +81,7 @@
 
 
 @code {
-
+    public bool DeleteDialogOpen { get; set; }
 
     UserRequest userRequest = new UserRequest();
     protected List<RoleModel> roleList = new();
@@ -98,37 +98,33 @@
         roleList = await Http.GetFromJsonAsync<List<RoleModel>>(Endpoints.GetRoles());
     }
 
-    //async Task createUser()
-    //{
+    async Task createUser()
+    {
 
 
-    //    var response = await Http.PostAsJsonAsync<UserRequest>(Endpoints.CreateUsers(), userRequest);
+        var response = await Http.PostAsJsonAsync<UserRequest>(Endpoints.CreateUsers(), userRequest);
 
-    //    if (response.IsSuccessStatusCode)
-    //    {
-
-
-    //        NavManager.NavigateTo("/fetchuserdetails");
+        if (response.IsSuccessStatusCode)
+        {
 
 
-    //    }
-    //    else
-    //    {
-
-    //        if (((int)response.StatusCode) == 401)
-    //        {
-    //            errorMessage = "usuario ya registrado";
-    //        }
-    //        else
-    //        {
-    //            errorMessage = "Something went wrong";
-    //        }
-    //    }
-    //     errorMessage = " usuario creado";
-    //}
+            NavManager.NavigateTo("/fetchuserdetails");
 
 
-   
+        }
+        else
+        {
 
+            if (((int)response.StatusCode) == 401)
+            {
+                errorMessage = "usuario ya registrado";
+            }
+            else
+            {
+                errorMessage = "Something went wrong";
+            }
+        }
+         errorMessage = " usuario creado";
+    }
        
 }

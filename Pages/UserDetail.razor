@@ -1,8 +1,9 @@
 ﻿@page "/fetchuserdetails"
 @using Reto2G5.Model;
 @using System.Net.Http.Headers;
-
+@using Reto2G5.componets;
 @inject HttpClient Http
+@inject NavigationManager NavManager
 @using System.Text.Json;
 @using System.Text.Json.Serialization;
 @using System.Net;
@@ -50,12 +51,7 @@ else
         <table class="table table-striped align-middle table-bordered">
             <thead class="table-success">
                 <tr>
-                  @*  <th>ID</th>
-                    <th>Name</th>
-                    <th>Address</th>
-                    <th>Department</th>
-                    <th>Cell No</th>
-                    <th>E-mail</th>*@
+
                 <th>dni</th>
                 <th>enabled</th>
                
@@ -66,105 +62,40 @@ else
             {
                         <tr>
                             <td>@user.dni</td>
-                            <td>@user.isEnabled</td>
-                           <td></td>
-                    @* <td>@user.Userid</td>
-                            <td>@user.Username</td>
-                            <td>@user.Address</td>
-                            <td>@user.Cellnumber</td>
-                            <td>@user.Emailid</td>*@
-                            <td>
-                                <a href='/user/edit/' class="btn btn-outline-dark" role="button">
-                                    Edit
-                                </a>
-                                <a href='/user/delete' class="btn btn-outline-danger" role="button">
-                                    Delete
-                                </a>
-                            </td>
+                            <td>@user.Enabled</td>
+                            <td><button type="button" class="btn btn-outline-danger btn-sm" @onclick="() => OpenDeleteDialog(user)">Delete</button></td>
                         </tr>
             }
             </tbody>
 
         </table>
+        @if (DeleteDialogOpen)
+            {
+                <ModalDialog Title="¿Estas Seguro?" Text="¿Quieres borrar el usuario?" OnClose="OnDeleteDialogClose"></ModalDialog>
+            }
 }
 @code {
 
     protected List<UserModel> userList = new();
     protected List<UserModel> searchUserData = new();
-    protected UserModel user = new();
+    //protected UserModel user = new();
+    private UserModel _userModelToDelete;
     protected string SearchString { get; set; } = string.Empty;
     string? bearerToken = "Bearer " + Index.funciones.token;
     protected override async Task OnInitializedAsync()
     {
-        await GetUser();
+        await GetUser3();
     }
 
-    
+
     protected async Task GetUser()
     {
 
-        //Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Index.funciones.token);
-
-        //Http.DefaultRequestHeaders.Add("Authorization", $"Bearer " + Index.funciones.token);
         userList = await Http.GetFromJsonAsync<List<UserModel>>(Endpoints.GetUsers());
 
         searchUserData = userList;
     }
-    protected async Task GetUser2()
-    {
-        var request = new HttpRequestMessage(HttpMethod.Get,Endpoints.GetUsers());
-        request.Headers.Add("Authorization", "Bearer " + Index.funciones.token);
-        request.Headers.Add("Access-Control-Allow-Headers", "*");
-        request.SetBrowserRequestMode(BrowserRequestMode.NoCors);
-        request.SetBrowserRequestCache(BrowserRequestCache.NoStore);
-        
-        var response = await Http.SendAsync(request);
 
-        if (response.StatusCode == System.Net.HttpStatusCode.OK)
-        {
-            var apistring = await response.Content.ReadAsStringAsync();
-
-            userList = JsonSerializer.Deserialize<List<UserModel>>(apistring);
-        }
-        searchUserData = userList;
-    }
-
-    //protected async Task GetUser()
-    //{
-    //    var request = new HttpRequestMessage(HttpMethod.Get, Endpoints.GetUsers());
-    //    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer ", token);        
-    //    HttpResponseMessage response = await Http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-    //    if (response.StatusCode == System.Net.HttpStatusCode.OK)
-    //    {
-    //        var apiString = await response.Content.ReadAsStringAsync();
-    //        //users = JsonConvert.DeserializeObject<List<Player>>(apiString);
-    //        userList = JsonSerializer.Deserialize<List<UserModel>>(apiString);
-    //    }
-    //    searchUserData = userList;
-    //}
-
-    protected async Task GetUser3()
-    {
-
-        //Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Index.funciones.token);
-
-
-        HttpClient client = new HttpClient();
-     
-
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Index.funciones.token);
-
-        HttpResponseMessage response = await client.GetAsync(Endpoints.GetUsers());
-        if (response.IsSuccessStatusCode)
-        {
-          
-            var apiString = await response.Content.ReadAsStringAsync();
-                    
-            userList = JsonSerializer.Deserialize<List<UserModel>>(apiString);
-
-            searchUserData = userList;
-        }
-    }
 
     protected void FilterUser()
     {
@@ -179,13 +110,115 @@ else
             userList = searchUserData;
         }
     }
-    protected void DeleteConfirm(String userDni)
-    {
-        user = userList.FirstOrDefault(x => x.dni == userDni);
-    }
+    //protected void DeleteConfirm(String userDni)
+    //{
+    //    user = userList.FirstOrDefault(x => x.dni == userDni);
+    //}
     public void ResetSearch()
     {
         SearchString = string.Empty;
         userList = searchUserData;
     }
+
+
+    public bool DeleteDialogOpen { get; set; } 
+
+    private async Task OnDeleteDialogClose(bool accepted)
+    {
+        if (accepted)
+        {
+            string dni = _userModelToDelete.dni;
+            var response = await Http.DeleteAsync(Endpoints.DeleteUsers(dni));
+
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("ha entrado 200");
+                //userResponse = JsonSerializer.Deserialize<UserResponse>(response.Content.ReadAsStringAsync().Result);
+                //funciones.token = userResponse.accessToken;
+                
+                //return userResponse;
+
+            }
+            else
+            {
+
+                if (((int)response.StatusCode) == 401)
+                {
+                    //errorMessage = "Incorrect user or password";
+                }
+                else
+                {
+                    //errorMessage = "Something went wrong";
+                }
+            }
+            _userModelToDelete = null;
+            
+            
+        }
+           
+          
+         
+            
+        
+        DeleteDialogOpen = false;
+        StateHasChanged();
+        NavManager.NavigateTo("/fetchuserdetails");
+    }
+    private void OpenDeleteDialog(UserModel userModel)
+    {
+        DeleteDialogOpen = true;
+        _userModelToDelete = userModel;
+        StateHasChanged();
+    }
+
+    //protected async Task GetUser2()
+    //{
+    //    var request = new HttpRequestMessage(HttpMethod.Get, Endpoints.GetUsers());
+    //    // request.SetBrowserRequestMode(BrowserRequestMode.Cors);
+    //    request.Headers.Add("Authorization", "Bearer " + Index.funciones.token);
+    //    request.Headers.Add("Access-Control-Allow-Headers", "http://localhost:8082");
+    //    request.Headers.Add("Access-Control-Allow-Origin", "http://localhost:8082");
+    //    // request.SetBrowserRequestMode(BrowserRequestMode.NoCors);
+    //    // request.SetBrowserRequestCache(BrowserRequestCache.NoStore);
+
+    //    var response = await Http.SendAsync(request);
+
+    //    if (response.IsSuccessStatusCode)
+    //    {
+    //        var apistring = await response.Content.ReadAsStringAsync();
+    //        Console.Write(apistring);
+    //        userList = JsonSerializer.Deserialize<List<UserModel>>(apistring);
+    //    }
+    //    else
+    //    {
+    //        Console.Write(response.StatusCode);
+    //    }
+    //    searchUserData = userList;
+    //}
+
+
+
+    protected async Task GetUser3()
+    {
+
+        //Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Index.funciones.token);
+
+
+        HttpClient client = new HttpClient();
+
+
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Index.funciones.token);
+
+        HttpResponseMessage response = await client.GetAsync(Endpoints.GetUsers());
+        if (response.IsSuccessStatusCode)
+        {
+
+            var apiString = await response.Content.ReadAsStringAsync();
+
+            userList = JsonSerializer.Deserialize<List<UserModel>>(apiString);
+
+            searchUserData = userList;
+        }
+    }
+
 }

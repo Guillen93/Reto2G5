@@ -81,15 +81,15 @@
     {
 
 
-        var response = await Http.PostAsJsonAsync<UserRequest>(Endpoints.Login(), userRequest);
+        var response = await Http.PostAsJsonAsync<UserRequest>(Endpoints.Login2(), userRequest);
 
         if (response.IsSuccessStatusCode)
         {
 
-            //userResponse = JsonSerializer.Deserialize<UserResponse>(response.Content.ReadAsStringAsync().Result);
-            //funciones.token = userResponse.accessToken;
-            NavManager.NavigateTo("/fetchuserdetails/");
-            //return userResponse;
+            userResponse = JsonSerializer.Deserialize<UserResponse>(response.Content.ReadAsStringAsync().Result);
+            funciones.token = userResponse.accessToken;
+            NavManager.NavigateTo("/fetchuserdetails");
+            return userResponse;
 
         }
         else
