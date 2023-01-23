@@ -7,12 +7,12 @@ namespace Reto2G5
     {
         public static string Login()
         {
-            return "http://localhost:8082/api/users/login";
+            return "http://localhost:8082/api/users/login/Di";
         }
 
         public static string GetUsers()
         {
-            return "http://localhost:8082/api/users";
+            return "http://localhost:8082/api/users/Di";
         }
         public static string GetStudents()
         {
@@ -22,7 +22,14 @@ namespace Reto2G5
         {
             return "http://localhost:8082/api/professors";
         }
-
+        public static string CreateUsers()
+        {
+            return "http://localhost:8082/api/users/signup";
+        }
+        public static string GetRoles()
+        {
+            return "http://localhost:8082/api/roles";
+        }
 
 
     }

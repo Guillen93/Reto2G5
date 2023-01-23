@@ -7,7 +7,8 @@
 @using System.Text.Json.Serialization;
 @using System.Net;
 @using System.Text;
-
+@using System.Net.Http;
+@using System.Net.Http.Headers;
 
 
 <h1>User Data</h1>
@@ -19,8 +20,15 @@
             Add User
         </a>
     </div>
+    @*<div class="row align-items-end">
+        <div class="col"></div>
+        <div class="col">
+            <button class="btn btn-danger" style="width:150px" @onclick=GetUser2>buscar usuarios</button>
+        </div>
+        <div class="col"></div>
+    </div>*@
     <div class="input-group col">
-        <input type="text" class="form-control" placeholder="Search user by name"
+        <input type="text" class="form-control" placeholder="Search user by dni"
                @bind="SearchString" @bind:event="oninput" @onkeyup="FilterUser" />
         @if (SearchString.Length > 0)
         {
@@ -66,10 +74,10 @@ else
                             <td>@user.Cellnumber</td>
                             <td>@user.Emailid</td>*@
                             <td>
-                                <a href='/user/edit/@user.dni' class="btn btn-outline-dark" role="button">
+                                <a href='/user/edit/' class="btn btn-outline-dark" role="button">
                                     Edit
                                 </a>
-                                <a href='/user/delete/@user.dni' class="btn btn-outline-danger" role="button">
+                                <a href='/user/delete/' class="btn btn-outline-danger" role="button">
                                     Delete
                                 </a>
                             </td>
@@ -85,36 +93,39 @@ else
     protected List<UserModel> searchUserData = new();
     protected UserModel user = new();
     protected string SearchString { get; set; } = string.Empty;
-    string? bearerToken = "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMDAwMDAwNFAiLCJpc3MiOiJBRFREQU0iLCJpYXQiOjE2NzQxNTE0MDUsImV4cCI6MTY3NDIzNzgwNSwidXNlckRuaSI6IjAwMDAwMDA0UCIsInJvbGVzIjpbeyJyb2xlSUQiOjMsInJvbGUiOiJTdHVkZW50In1dfQ.CihbhBgQPJPIoPqmRUx7RVcc_H66ix0R7B739PW_wDhjBHDHJv4n4UjXc_NmO9J9w8P0plnHPYh4Tsga23ZWaQ";
-
+    string? bearerToken = "Bearer " + Index.funciones.token;
     protected override async Task OnInitializedAsync()
     {
         await GetUser();
     }
 
-    protected async Task GetUser2()
-    {
-        var request = new HttpRequestMessage(HttpMethod.Get,Endpoints.GetUsers());
-        request.Headers.Add("Authorization", bearerToken);
-        request.Headers.Add("Access-Control-Allow-Headers", "*");
-        var response = await Http.SendAsync(request);
-
-        if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                {
-                    var apistring = await response.Content.ReadAsStringAsync();
     
-                    userList = JsonSerializer.Deserialize<List<UserModel>>(apistring);
-                }
-        searchUserData = userList;
-    }
     protected async Task GetUser()
     {
 
         //Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Index.funciones.token);
 
-        Http.DefaultRequestHeaders.Add("Authorization", $"Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMDAwMDAwNFAiLCJpc3MiOiJBRFREQU0iLCJpYXQiOjE2NzQxNTE0MDUsImV4cCI6MTY3NDIzNzgwNSwidXNlckRuaSI6IjAwMDAwMDA0UCIsInJvbGVzIjpbeyJyb2xlSUQiOjMsInJvbGUiOiJTdHVkZW50In1dfQ.CihbhBgQPJPIoPqmRUx7RVcc_H66ix0R7B739PW_wDhjBHDHJv4n4UjXc_NmO9J9w8P0plnHPYh4Tsga23ZWaQ");
+        //Http.DefaultRequestHeaders.Add("Authorization", $"Bearer " + Index.funciones.token);
         userList = await Http.GetFromJsonAsync<List<UserModel>>(Endpoints.GetUsers());
 
+        searchUserData = userList;
+    }
+    protected async Task GetUser2()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get,Endpoints.GetUsers());
+        request.Headers.Add("Authorization", "Bearer " + Index.funciones.token);
+        request.Headers.Add("Access-Control-Allow-Headers", "*");
+        request.SetBrowserRequestMode(BrowserRequestMode.NoCors);
+        request.SetBrowserRequestCache(BrowserRequestCache.NoStore);
+        
+        var response = await Http.SendAsync(request);
+
+        if (response.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            var apistring = await response.Content.ReadAsStringAsync();
+
+            userList = JsonSerializer.Deserialize<List<UserModel>>(apistring);
+        }
         searchUserData = userList;
     }
 
@@ -132,7 +143,28 @@ else
     //    searchUserData = userList;
     //}
 
-  
+    protected async Task GetUser3()
+    {
+
+        //Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Index.funciones.token);
+
+
+        HttpClient client = new HttpClient();
+     
+
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Index.funciones.token);
+
+        HttpResponseMessage response = await client.GetAsync(Endpoints.GetUsers());
+        if (response.IsSuccessStatusCode)
+        {
+          
+            var apiString = await response.Content.ReadAsStringAsync();
+                    
+            userList = JsonSerializer.Deserialize<List<UserModel>>(apiString);
+
+            searchUserData = userList;
+        }
+    }
 
     protected void FilterUser()
     {

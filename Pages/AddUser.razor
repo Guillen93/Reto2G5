@@ -1,4 +1,6 @@
-﻿@page "/"
+﻿@page "/user/add"
+
+
 @using System.ComponentModel.DataAnnotations
 @using Reto2G5.Model;
 @using System.Text.Json;
@@ -10,7 +12,6 @@
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavManager
 
-<PageTitle>Index</PageTitle>
 
 
 <div >
@@ -19,23 +20,19 @@
 <div class="container">
     <div class="row align-items-start">
         <div class="col"> </div>
-        <div class="col">
-            <div class="text-center">
-                <p><img src="css/img/logoDI.png" /></p>
-            </div>
-        
-        </div>
+       
         <div class="col"> </div>
     </div>
     <div class="row align-items-center">
         <div class="col"></div>
         <div class="col">
-                <EditForm Model=userRequest OnValidSubmit="SumitForm" OnInvalidSubmit="invalidSumitForm">
+            <h3>Añadir Usuario</h3>
+                <EditForm Model=userRequest >
                     <DataAnnotationsValidator />
                    
                     <div>
                         <p>
-                            <label for="nombre">User:</label>
+                            <label for="nombre">User_Dni:</label>
                             <InputText @bind-Value=userRequest.dni id="nombre" class="form-control" size=40 style="width:500px " />
                             <ValidationMessage For=@(()=>userRequest.dni) />
                         </p>
@@ -48,11 +45,25 @@
                             <ValidationMessage For=@(()=>userRequest.password) />
                         </p>
                     </div>
+                     <div>
+                        <p>
+                            <label for="roles">Role:</label>
+                            <InputSelect class="form-select" @bind-Value="userRequest.roleId" >
+                                <option value="0" selected>Elige un Rol</option>
+                                @foreach(var rol in roleList)
+                                {
+                                    <option value="@rol.roleId">@rol.role</option>
+                                }
+
+                            </InputSelect>
+                        </p>
+
+                    </div>
 
                     <div class="row align-items-end">
                         <div class="col"></div>
                         <div class="col">
-                            <button class="btn btn-danger" style="width:150px" @onclick=login>Ir</button>
+                            <button class="btn btn-danger" style="width:150px" >Ir</button>
                         </div>
                         <div class="col"></div>
                     </div>
@@ -60,7 +71,6 @@
             </div>
         <div class="col"> </div>
             <p>@errorMessage</p>
-            <p>@userResponse.accessToken</p>
           
     </div>
     
@@ -72,56 +82,51 @@
 
 
     UserRequest userRequest = new UserRequest();
-    UserResponse userResponse = new UserResponse();
-
+    protected List<RoleModel> roleList = new();
     String errorMessage;
 
-
-    async Task<UserResponse> login()
+    protected override async Task OnInitializedAsync()
     {
-
-
-        var response = await Http.PostAsJsonAsync<UserRequest>(Endpoints.Login(), userRequest);
-
-        if (response.IsSuccessStatusCode)
-        {
-
-            //userResponse = JsonSerializer.Deserialize<UserResponse>(response.Content.ReadAsStringAsync().Result);
-            //funciones.token = userResponse.accessToken;
-            NavManager.NavigateTo("/fetchuserdetails/");
-            //return userResponse;
-
-        }
-        else
-        {
-
-            if (((int)response.StatusCode) == 401)
-            {
-                errorMessage = "Incorrect user or password";
-            }
-            else
-            {
-                errorMessage = "Something went wrong";
-            }
-        }
-        return null;
+        await GetRoles();
     }
 
-    public static class funciones
+
+    protected async Task GetRoles()
     {
-        
-        public static string token { get; set; } = string.Empty;
-
-
+        roleList = await Http.GetFromJsonAsync<List<RoleModel>>(Endpoints.GetRoles());
     }
 
-    void SumitForm()
-    {
-        
-    
-    }
+    //async Task createUser()
+    //{
 
-    void invalidSumitForm()
-    { }
 
-    }
+    //    var response = await Http.PostAsJsonAsync<UserRequest>(Endpoints.CreateUsers(), userRequest);
+
+    //    if (response.IsSuccessStatusCode)
+    //    {
+
+
+    //        NavManager.NavigateTo("/fetchuserdetails");
+
+
+    //    }
+    //    else
+    //    {
+
+    //        if (((int)response.StatusCode) == 401)
+    //        {
+    //            errorMessage = "usuario ya registrado";
+    //        }
+    //        else
+    //        {
+    //            errorMessage = "Something went wrong";
+    //        }
+    //    }
+    //     errorMessage = " usuario creado";
+    //}
+
+
+   
+
+       
+}
