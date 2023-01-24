@@ -1,0 +1,187 @@
+﻿@page "/fetchProfessordetails"
+@using Reto2G5.Enum;
+@using Reto2G5.Helpers;
+@using Reto2G5.Interfaces;
+@using Reto2G5.Model;
+@using System.Net.Http.Headers;
+@using Reto2G5.componets;
+@inject HttpClient Http
+@inject NavigationManager NavManager
+@using System.Text.Json;
+@using System.Text.Json.Serialization;
+@using System.Net;
+@using System.Text;
+@using System.Net.Http;
+@using System.Net.Http.Headers;
+
+
+<h1>Pofessors Data</h1>
+<p></p>
+<div class="row">
+    <div class="col-md-6">
+        <a href='/user/add' class="btn btn-primary" role="button">
+            <i class="fas fa-user-plus"></i>
+            Add User
+        </a>
+    </div>
+
+    <div class="input-group col">
+        <input type="text" class="form-control" placeholder="Search user by dni"
+               @bind="SearchString" @bind:event="oninput" @onkeyup="FilterUser" />
+        @if (SearchString.Length > 0)
+        {
+            <div class="input-group-append">
+                <button class="btn btn-danger" @onclick="ResetSearch">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        }
+    </div>
+</div>
+<br />
+@if (professorList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-striped align-middle table-bordered">
+        <thead class="table-success">
+            <tr>
+
+                <th>ProfessorDni</th>
+                <th>name</th>
+                <th>surname</th>
+                <th>email</th>
+                <th>photo</th>
+                <th>nationality</th>                
+                <th>addres</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var professor in professorList)
+            {
+                <tr>
+
+                    <th>@professor.professorDni</th>
+                    <th>@professor.name</th>
+                    <th>@professor.surname</th>
+                    <th>@professor.email</th>
+                    <th>@professor.photo</th>
+                    <th>@professor.nationality</th>
+                    <th>@professor.addres</th>
+                    
+                    
+                    <td><button type="button" class="btn btn-outline-danger btn-sm" @onclick="() => OpenDeleteDialog(professor)">Delete</button></td>
+                </tr>
+            }
+        </tbody>
+
+    </table>
+    @if (DeleteDialogOpen)
+    {
+        <ModalDialog Title="¿Estas Seguro?" Text="¿Quieres borrar el usuario?" OnClose="OnDeleteDialogClose"></ModalDialog>
+    }
+}
+@code {
+    [Inject]
+    private ILocalStorage localStorage { get; set; }
+    UserResponse userLocal = new UserResponse();
+    protected List<ProfessorModel> professorList = new();
+    protected List<ProfessorModel> searchUserData = new();
+
+    //protected UserModel user = new();
+    private ProfessorModel _ProfessorModelToDelete;
+    protected string SearchString { get; set; } = string.Empty;
+    protected override async Task OnInitializedAsync()
+    {
+        userLocal = IsDataNull.CreateInstanceIFIsNull<UserResponse>(await localStorage.GetValue<UserResponse>(ValuesKeys.Objeto));
+        await Getprofes();
+
+    }
+
+
+    protected async Task Getprofes()
+    {
+
+        professorList = await Http.GetFromJsonAsync<List<ProfessorModel>>(Endpoints.GetProfessors());
+
+        searchUserData = professorList;
+
+    }
+
+
+    protected void FilterUser()
+    {
+        if (!string.IsNullOrEmpty(SearchString))
+        {
+
+            professorList = searchUserData
+                .Where(x => x.professorDni.IndexOf(SearchString, StringComparison.OrdinalIgnoreCase) != -1)
+                .ToList();
+        }
+        else
+        {
+            professorList = searchUserData;
+        }
+    }
+
+    public void ResetSearch()
+    {
+        SearchString = string.Empty;
+        professorList = searchUserData;
+    }
+
+
+    public bool DeleteDialogOpen { get; set; }
+
+    private async Task OnDeleteDialogClose(bool accepted)
+    {
+        if (accepted)
+        {
+            //string dni = _studentModelToDelete.studentDni;
+            ////var response = await Http.DeleteAsync(Endpoints.DeleteUsers(dni));
+
+            //if (response.IsSuccessStatusCode)
+            //{
+            //    Console.WriteLine("ha entrado 200");
+
+
+            //}
+            //else
+            //{
+
+            //    if (((int)response.StatusCode) == 401)
+            //    {
+            //        //errorMessage = "Incorrect user or password";
+            //    }
+            //    else
+            //    {
+            //        //errorMessage = "Something went wrong";
+            //    }
+            //}
+            _ProfessorModelToDelete = null;
+
+
+        }
+
+
+
+
+
+        DeleteDialogOpen = false;
+        StateHasChanged();
+        NavManager.NavigateTo("/fetchProfessordetails", forceLoad: true);
+    }
+    private void OpenDeleteDialog(ProfessorModel professorModel)
+    {
+        DeleteDialogOpen = true;
+        _ProfessorModelToDelete = professorModel;
+        StateHasChanged();
+    }
+
+
+   
+
+}

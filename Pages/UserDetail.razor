@@ -24,13 +24,7 @@
             Add User
         </a>
     </div>
-    @*<div class="row align-items-end">
-        <div class="col"></div>
-        <div class="col">
-            <button class="btn btn-danger" style="width:150px" @onclick=GetUser2>buscar usuarios</button>
-        </div>
-        <div class="col"></div>
-    </div>*@
+  
     <div class="input-group col">
         <input type="text" class="form-control" placeholder="Search user by dni"
                @bind="SearchString" @bind:event="oninput" @onkeyup="FilterUser" />
@@ -83,6 +77,7 @@ else
     UserResponse userLocal = new UserResponse();
     protected List<UserModel> userList = new();
     protected List<UserModel> searchUserData = new();
+
     //protected UserModel user = new();
     private UserModel _userModelToDelete;
     protected string SearchString { get; set; } = string.Empty;
@@ -90,6 +85,7 @@ else
     {
         userLocal = IsDataNull.CreateInstanceIFIsNull<UserResponse>(await localStorage.GetValue<UserResponse>(ValuesKeys.Objeto));
         await GetUser3();
+
     }
 
 
@@ -97,8 +93,9 @@ else
     {
 
         userList = await Http.GetFromJsonAsync<List<UserModel>>(Endpoints.GetUsers());
-
+       
         searchUserData = userList;
+
     }
 
 
@@ -106,6 +103,7 @@ else
     {
         if (!string.IsNullOrEmpty(SearchString))
         {
+           
             userList = searchUserData
                 .Where(x => x.dni.IndexOf(SearchString, StringComparison.OrdinalIgnoreCase) != -1)
                 .ToList();
@@ -115,10 +113,7 @@ else
             userList = searchUserData;
         }
     }
-    //protected void DeleteConfirm(String userDni)
-    //{
-    //    user = userList.FirstOrDefault(x => x.dni == userDni);
-    //}
+
     public void ResetSearch()
     {
         SearchString = string.Empty;
@@ -138,11 +133,8 @@ else
             if (response.IsSuccessStatusCode)
             {
                 Console.WriteLine("ha entrado 200");
-                //userResponse = JsonSerializer.Deserialize<UserResponse>(response.Content.ReadAsStringAsync().Result);
-                //funciones.token = userResponse.accessToken;
                 
-                //return userResponse;
-
+                
             }
             else
             {
@@ -206,7 +198,7 @@ else
     protected async Task GetUser3()
     {
 
-        //Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Index.funciones.token);
+      
 
         
         HttpClient client = new HttpClient();

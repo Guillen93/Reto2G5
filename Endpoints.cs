@@ -16,7 +16,7 @@ namespace Reto2G5
 
         public static string GetUsers()
         {
-            return "http://localhost:8082/api/users/Di";
+            return "http://localhost:8082/api/users/di";
         }
         public static string GetStudents()
         {

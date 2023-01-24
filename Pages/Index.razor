@@ -33,7 +33,7 @@
     <div class="row align-items-center">
         <div class="col"></div>
         <div class="col">
-                <EditForm Model=userRequest OnValidSubmit="SumitForm" OnInvalidSubmit="invalidSumitForm">
+                <EditForm Model=userRequest >
                     <DataAnnotationsValidator />
                    
                     <div>
@@ -47,13 +47,15 @@
                     <div>
                         <p>
                             <label for="password">PassWord:</label>
-                            <InputText @bind-Value=userRequest.password id="password" type="password" class="form-control" size=40 style="width:500px" />
+                           
+                            <InputText @bind-Value=userRequest.password id="password" type=@tipo class="form-control" size=40 style="width:500px"/>
+                            
                             <ValidationMessage For=@(()=>userRequest.password) />
                         </p>
                     </div>
 
                     <div class="row align-items-end">
-                        <div class="col"></div>
+                        <div class="col"> </div>
                         <div class="col">
                             <button class="btn btn-danger" style="width:150px" @onclick=login>Ir</button>
                         </div>
@@ -61,7 +63,12 @@
                     </div>
                 </EditForm>
             </div>
-        <div class="col"> </div>
+            <div class="col">
+                <br /><br />
+                <button class="btn btn-default" type="button" @onclick="mostrarPass">
+                    mostrar
+                </button>
+            </div>
             <p>@errorMessage</p>
             <p>@userResponse.accessToken</p>
           
@@ -74,16 +81,19 @@
 @code {
     [Inject]
     private ILocalStorage localStorage{ get; set; }
-
+    string tipo = "password";
     UserRequest userRequest = new UserRequest();
     UserResponse userResponse = new UserResponse();
-    
+
     String errorMessage;
+    protected override async Task OnInitializedAsync()
+    {
+        localStorage.RemoveItem(ValuesKeys.Objeto);
+    }
 
 
     async Task<UserResponse> login()
     {
-
 
         var response = await Http.PostAsJsonAsync<UserRequest>(Endpoints.Login2(), userRequest);
 
@@ -91,8 +101,23 @@
         {
 
             userResponse = JsonSerializer.Deserialize<UserResponse>(response.Content.ReadAsStringAsync().Result);
-            localStorage.SetValue<UserResponse>(ValuesKeys.Objeto, userResponse);
-            NavManager.NavigateTo("/fetchuserdetails");
+            List<RoleModel> roles = userResponse.roles;
+            foreach (var rol in roles)
+            {
+                if (rol.role.Equals("Admin"))
+                {
+                    localStorage.SetValue<UserResponse>(ValuesKeys.Objeto, userResponse);
+                    NavManager.NavigateTo("/fetchuserdetails");
+                }
+                else
+                {
+                    errorMessage = " no tienes permiso para entrar ";
+                }
+            }
+            
+
+
+           
             return userResponse;
 
         }
@@ -110,16 +135,15 @@
         }
         return null;
     }
-
-   
-
-    void SumitForm()
-    {
-        
     
-    }
+	private void mostrarPass(){
+      
+				if(tipo == "password"){
+					tipo = "text";
+				}else{
+					tipo = "password";
+				}
+			}
 
-    void invalidSumitForm()
-    { }
 
     }

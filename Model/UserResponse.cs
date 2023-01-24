@@ -6,8 +6,7 @@ namespace Reto2G5.Model
     {
         public string dni { get; set; }
         public string accessToken { get; set; }
-
-
+        public List<RoleModel> roles { get; set; }
        
            
     }
