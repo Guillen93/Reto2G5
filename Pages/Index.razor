@@ -1,5 +1,8 @@
 ﻿@page "/"
 @using System.ComponentModel.DataAnnotations
+@using Reto2G5.Enum;
+@using Reto2G5.Helpers;
+@using Reto2G5.Interfaces;
 @using Reto2G5.Model;
 @using System.Text.Json;
 @using System.Text.Json.Serialization;
@@ -69,11 +72,12 @@
 </div>
 
 @code {
-
+    [Inject]
+    private ILocalStorage localStorage{ get; set; }
 
     UserRequest userRequest = new UserRequest();
     UserResponse userResponse = new UserResponse();
-
+    
     String errorMessage;
 
 
@@ -87,7 +91,7 @@
         {
 
             userResponse = JsonSerializer.Deserialize<UserResponse>(response.Content.ReadAsStringAsync().Result);
-            funciones.token = userResponse.accessToken;
+            localStorage.SetValue<UserResponse>(ValuesKeys.Objeto, userResponse);
             NavManager.NavigateTo("/fetchuserdetails");
             return userResponse;
 
@@ -107,13 +111,7 @@
         return null;
     }
 
-    public static class funciones
-    {
-        
-        public static string token { get; set; } = string.Empty;
-
-
-    }
+   
 
     void SumitForm()
     {

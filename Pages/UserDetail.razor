@@ -1,4 +1,7 @@
 ﻿@page "/fetchuserdetails"
+@using Reto2G5.Enum;
+@using Reto2G5.Helpers;
+@using Reto2G5.Interfaces;
 @using Reto2G5.Model;
 @using System.Net.Http.Headers;
 @using Reto2G5.componets;
@@ -75,15 +78,17 @@ else
             }
 }
 @code {
-
+    [Inject]
+    private ILocalStorage localStorage { get; set; }
+    UserResponse userLocal = new UserResponse();
     protected List<UserModel> userList = new();
     protected List<UserModel> searchUserData = new();
     //protected UserModel user = new();
     private UserModel _userModelToDelete;
     protected string SearchString { get; set; } = string.Empty;
-    string? bearerToken = "Bearer " + Index.funciones.token;
     protected override async Task OnInitializedAsync()
     {
+        userLocal = IsDataNull.CreateInstanceIFIsNull<UserResponse>(await localStorage.GetValue<UserResponse>(ValuesKeys.Objeto));
         await GetUser3();
     }
 
@@ -162,7 +167,7 @@ else
         
         DeleteDialogOpen = false;
         StateHasChanged();
-        NavManager.NavigateTo("/fetchuserdetails");
+        NavManager.NavigateTo("/fetchuserdetails", forceLoad:true);
     }
     private void OpenDeleteDialog(UserModel userModel)
     {
@@ -203,11 +208,9 @@ else
 
         //Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Index.funciones.token);
 
-
+        
         HttpClient client = new HttpClient();
-
-
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Index.funciones.token);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
 
         HttpResponseMessage response = await client.GetAsync(Endpoints.GetUsers());
         if (response.IsSuccessStatusCode)
