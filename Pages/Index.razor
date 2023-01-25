@@ -81,6 +81,7 @@
 @code {
     [Inject]
     private ILocalStorage localStorage{ get; set; }
+
     string tipo = "password";
     UserRequest userRequest = new UserRequest();
     UserResponse userResponse = new UserResponse();
@@ -88,7 +89,9 @@
     String errorMessage;
     protected override async Task OnInitializedAsync()
     {
-        localStorage.RemoveItem(ValuesKeys.Objeto);
+        
+        localStorage.ClearAll();
+
     }
 
 
@@ -107,6 +110,7 @@
                 if (rol.role.Equals("Admin"))
                 {
                     localStorage.SetValue<UserResponse>(ValuesKeys.Objeto, userResponse);
+                    
                     NavManager.NavigateTo("/fetchuserdetails");
                 }
                 else

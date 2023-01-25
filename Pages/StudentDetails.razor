@@ -97,12 +97,12 @@ else
     protected override async Task OnInitializedAsync()
     {
         userLocal = IsDataNull.CreateInstanceIFIsNull<UserResponse>(await localStorage.GetValue<UserResponse>(ValuesKeys.Objeto));
-        await GetUser();
+        await GetStudent();
 
     }
 
 
-    protected async Task GetUser()
+    protected async Task GetStudent()
     {
 
         studentList = await Http.GetFromJsonAsync<List<StudentModel>>(Endpoints.GetStudents());
@@ -166,10 +166,6 @@ else
 
         }
 
-
-
-
-
         DeleteDialogOpen = false;
         StateHasChanged();
         NavManager.NavigateTo("/fetchstudentdetails", forceLoad: true);
@@ -181,52 +177,9 @@ else
         StateHasChanged();
     }
 
-    //protected async Task GetUser2()
-    //{
-    //    var request = new HttpRequestMessage(HttpMethod.Get, Endpoints.GetUsers());
-    //    // request.SetBrowserRequestMode(BrowserRequestMode.Cors);
-    //    request.Headers.Add("Authorization", "Bearer " + Index.funciones.token);
-    //    request.Headers.Add("Access-Control-Allow-Headers", "http://localhost:8082");
-    //    request.Headers.Add("Access-Control-Allow-Origin", "http://localhost:8082");
-    //    // request.SetBrowserRequestMode(BrowserRequestMode.NoCors);
-    //    // request.SetBrowserRequestCache(BrowserRequestCache.NoStore);
-
-    //    var response = await Http.SendAsync(request);
-
-    //    if (response.IsSuccessStatusCode)
-    //    {
-    //        var apistring = await response.Content.ReadAsStringAsync();
-    //        Console.Write(apistring);
-    //        userList = JsonSerializer.Deserialize<List<UserModel>>(apistring);
-    //    }
-    //    else
-    //    {
-    //        Console.Write(response.StatusCode);
-    //    }
-    //    searchUserData = userList;
-    //}
 
 
 
-    protected async Task GetUser3()
-    {
-
-        //Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Index.funciones.token);
-
-
-        HttpClient client = new HttpClient();
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
-
-        HttpResponseMessage response = await client.GetAsync(Endpoints.GetUsers());
-        if (response.IsSuccessStatusCode)
-        {
-
-            var apiString = await response.Content.ReadAsStringAsync();
-
-            studentList = JsonSerializer.Deserialize<List<StudentModel>>(apiString);
-
-            searchUserData = studentList;
-        }
-    }
+    
 
 }

@@ -19,7 +19,7 @@
 <p></p>
 <div class="row">
     <div class="col-md-6">
-        <a href='/user/add' class="btn btn-primary" role="button">
+        <a href='/user/add' class="btn btn-success btn-sm" role="button">
             <i class="fas fa-user-plus"></i>
             Add User
         </a>
@@ -74,6 +74,7 @@ else
                     
                     
                     <td><button type="button" class="btn btn-outline-danger btn-sm" @onclick="() => OpenDeleteDialog(professor)">Delete</button></td>
+                    <td><button type="button" class="btn btn btn-info btn-sm" @onclick="() => OpenDeleteDialog(professor)">Update</button></td>
                 </tr>
             }
         </tbody>

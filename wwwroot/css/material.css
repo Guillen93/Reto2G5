@@ -11893,7 +11893,7 @@ select.is-invalid.form-control:hover[multiple], select.is-invalid.form-control:h
   cursor: pointer;
 }
 
-.navbar-toggler-icon {
+/*.navbar-toggler-icon {
   font-size: 1.5rem;
   line-height: 1.5rem;
   vertical-align: -0.362637em;
@@ -11907,7 +11907,7 @@ select.is-invalid.form-control:hover[multiple], select.is-invalid.form-control:h
   text-rendering: optimizeLegibility;
   text-transform: none;
   white-space: nowrap;
-  word-wrap: normal;
+  word-wrap: normal;*/
   /* display: inline-block;
   width: 1.5em;
   height: 1.5em;

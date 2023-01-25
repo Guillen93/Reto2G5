@@ -3,7 +3,7 @@
     public class RoleModel
     {
 
-        public int roleId { get; set; }
+        public int roleID { get; set; }
         public string role { get; set; }
     }
 }

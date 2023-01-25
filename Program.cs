@@ -1,6 +1,4 @@
-using Blazorise;
-using Blazorise.Icons.Material;
-using Blazorise.Material;
+
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Reto2G5;
@@ -12,13 +10,7 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 
-builder.Services
-    .AddBlazorise(options =>
-    {
-        options.Immediate = true;
-    })
-    .AddMaterialProviders()
-    .AddMaterialIcons();
+
 
 builder.Services.AddTransient<ILocalStorage, LocalStorage>();
 

@@ -7,8 +7,28 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazorise.Icons.Material" Version="1.1.6" />
-    <PackageReference Include="Blazorise.Material" Version="1.1.6" />
+    <Compile Remove="wwwroot\js\**" />
+    <Compile Remove="wwwroot\sample-data\**" />
+    <Content Remove="wwwroot\js\**" />
+    <Content Remove="wwwroot\sample-data\**" />
+    <EmbeddedResource Remove="wwwroot\js\**" />
+    <EmbeddedResource Remove="wwwroot\sample-data\**" />
+    <None Remove="wwwroot\js\**" />
+    <None Remove="wwwroot\sample-data\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\css\material-plugins.css" />
+    <Content Remove="wwwroot\css\material-plugins.css.map" />
+    <Content Remove="wwwroot\css\material-plugins.min.css" />
+    <Content Remove="wwwroot\css\material-plugins.min.css.map" />
+    <Content Remove="wwwroot\css\material.css" />
+    <Content Remove="wwwroot\css\material.css.map" />
+    <Content Remove="wwwroot\css\material.min.css" />
+    <Content Remove="wwwroot\css\material.min.css.map" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.WebApi" Version="5.2.9" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.11" PrivateAssets="all" />

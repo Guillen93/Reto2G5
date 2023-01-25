@@ -12,14 +12,12 @@
 @using System.Net;
 @using System.Text;
 @using System.Net.Http;
-@using System.Net.Http.Headers;
-
 
 <h1>User Data</h1>
 <p></p>
 <div class="row">
     <div class="col-md-6">
-        <a href='/user/add' class="btn btn-primary" role="button">
+        <a href='/user/add' class="btn btn-success btn-sm" role="button">
             <i class="fas fa-user-plus"></i>
             Add User
         </a>
@@ -60,7 +58,8 @@ else
                         <tr>
                             <td>@user.dni</td>
                             <td>@user.Enabled</td>
-                            <td><button type="button" class="btn btn-outline-danger btn-sm" @onclick="() => OpenDeleteDialog(user)">Delete</button></td>
+                            <td><button type="button" class="btn btn-danger btn-sm" @onclick="() => OpenDeleteDialog(user)">Delete</button></td>
+                            <td><button type="button" class="btn btn btn-info btn-sm" >Update</button></td>
                         </tr>
             }
             </tbody>
@@ -77,6 +76,7 @@ else
     UserResponse userLocal = new UserResponse();
     protected List<UserModel> userList = new();
     protected List<UserModel> searchUserData = new();
+    private string errorMessage;
 
     //protected UserModel user = new();
     private UserModel _userModelToDelete;
@@ -84,19 +84,28 @@ else
     protected override async Task OnInitializedAsync()
     {
         userLocal = IsDataNull.CreateInstanceIFIsNull<UserResponse>(await localStorage.GetValue<UserResponse>(ValuesKeys.Objeto));
-        await GetUser3();
+        await GetUser();
 
     }
 
-
-    protected async Task GetUser()
+     protected async Task GetUser()
     {
+           
+        HttpClient client = new HttpClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
 
-        userList = await Http.GetFromJsonAsync<List<UserModel>>(Endpoints.GetUsers());
-       
-        searchUserData = userList;
+        HttpResponseMessage response = await client.GetAsync(Endpoints.GetUsers());
+        if (response.IsSuccessStatusCode)
+        {
 
+            var apiString = await response.Content.ReadAsStringAsync();
+
+            userList = JsonSerializer.Deserialize<List<UserModel>>(apiString);
+
+            searchUserData = userList;
+        }
     }
+   
 
 
     protected void FilterUser()
@@ -128,20 +137,22 @@ else
         if (accepted)
         {
             string dni = _userModelToDelete.dni;
-            var response = await Http.DeleteAsync(Endpoints.DeleteUsers(dni));
+
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
+
+            HttpResponseMessage response = await client.DeleteAsync(Endpoints.DeleteUsers(dni));
 
             if (response.IsSuccessStatusCode)
             {
-                Console.WriteLine("ha entrado 200");
-                
-                
+                Console.WriteLine("ha borrado el usuario");
             }
             else
             {
 
-                if (((int)response.StatusCode) == 401)
+                if (((int)response.StatusCode) == 409)
                 {
-                    //errorMessage = "Incorrect user or password";
+                    errorMessage = "usuario ya existe";
                 }
                 else
                 {
@@ -159,7 +170,7 @@ else
         
         DeleteDialogOpen = false;
         StateHasChanged();
-        NavManager.NavigateTo("/fetchuserdetails", forceLoad:true);
+        //NavManager.NavigateTo("/fetchuserdetails", forceLoad:true);
     }
     private void OpenDeleteDialog(UserModel userModel)
     {
@@ -195,25 +206,6 @@ else
 
 
 
-    protected async Task GetUser3()
-    {
-
-      
-
-        
-        HttpClient client = new HttpClient();
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
-
-        HttpResponseMessage response = await client.GetAsync(Endpoints.GetUsers());
-        if (response.IsSuccessStatusCode)
-        {
-
-            var apiString = await response.Content.ReadAsStringAsync();
-
-            userList = JsonSerializer.Deserialize<List<UserModel>>(apiString);
-
-            searchUserData = userList;
-        }
-    }
+   
 
 }
