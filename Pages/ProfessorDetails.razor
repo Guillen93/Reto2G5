@@ -105,8 +105,9 @@ else
 
     protected async Task Getprofes()
     {
-
-        professorList = await Http.GetFromJsonAsync<List<ProfessorModel>>(Endpoints.GetProfessors());
+        HttpClient client = new HttpClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
+        professorList = await client.GetFromJsonAsync<List<ProfessorModel>>(Endpoints.GetProfessors());
 
         searchUserData = professorList;
 

@@ -10,7 +10,7 @@ namespace Reto2G5.Model
 
         public string password { get; set; }
 
-        public Boolean Enabled { get; set; }
+        public Boolean enabled { get; set; }
 
         public List<RoleModel> Roles { get; set; }
         public UserModel() { }

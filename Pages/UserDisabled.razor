@@ -1,4 +1,4 @@
-﻿@page "/fetchuserdetails"
+﻿@page "/fetchuserDisabled"
 @using Reto2G5.Enum;
 @using Reto2G5.Helpers;
 @using Reto2G5.Interfaces;
@@ -17,9 +17,9 @@
 <p></p>
 <div class="row">
     <div class="col-md-6">
-        <a href='/user/add' class="btn btn-success btn-sm" role="button">
+        <a href='/fetchuserdetails' class="btn btn-success btn-sm" role="button">
             <i class="fas fa-user-plus"></i>
-            Add User
+            Go User
         </a>
     </div>
   
@@ -88,13 +88,15 @@ else
 
     }
 
-     protected async Task GetUser()
+    protected async Task GetUser()
     {
-           
+
         HttpClient client = new HttpClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
 
-        HttpResponseMessage response = await client.GetAsync(Endpoints.GetUsers());
+        HttpResponseMessage response = await client.GetAsync(Endpoints.GetUsersNenabled());
+
+
         if (response.IsSuccessStatusCode)
         {
 
@@ -103,6 +105,9 @@ else
             userList = JsonSerializer.Deserialize<List<UserModel>>(apiString);
 
             searchUserData = userList;
+        }else
+        {
+            NavManager.NavigateTo("/fetchuserdetails");
         }
     }
    
@@ -156,7 +161,7 @@ else
                 }
                 else
                 {
-                    //errorMessage = "Something went wrong";
+                    errorMessage = "Something went wrong";
                 }
             }
             _userModelToDelete = null;
@@ -170,7 +175,7 @@ else
         
         DeleteDialogOpen = false;
         StateHasChanged();
-        //NavManager.NavigateTo("/fetchuserdetails", forceLoad:true);
+        NavManager.NavigateTo("/fetchuserdetails", forceLoad:true);
     }
     private void OpenDeleteDialog(UserModel userModel)
     {
@@ -179,33 +184,6 @@ else
         StateHasChanged();
     }
 
-    //protected async Task GetUser2()
-    //{
-    //    var request = new HttpRequestMessage(HttpMethod.Get, Endpoints.GetUsers());
-    //    // request.SetBrowserRequestMode(BrowserRequestMode.Cors);
-    //    request.Headers.Add("Authorization", "Bearer " + Index.funciones.token);
-    //    request.Headers.Add("Access-Control-Allow-Headers", "http://localhost:8082");
-    //    request.Headers.Add("Access-Control-Allow-Origin", "http://localhost:8082");
-    //    // request.SetBrowserRequestMode(BrowserRequestMode.NoCors);
-    //    // request.SetBrowserRequestCache(BrowserRequestCache.NoStore);
-
-    //    var response = await Http.SendAsync(request);
-
-    //    if (response.IsSuccessStatusCode)
-    //    {
-    //        var apistring = await response.Content.ReadAsStringAsync();
-    //        Console.Write(apistring);
-    //        userList = JsonSerializer.Deserialize<List<UserModel>>(apistring);
-    //    }
-    //    else
-    //    {
-    //        Console.Write(response.StatusCode);
-    //    }
-    //    searchUserData = userList;
-    //}
-
-
-
-   
+       
 
 }

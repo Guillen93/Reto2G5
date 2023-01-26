@@ -14,6 +14,10 @@ namespace Reto2G5
         {
             return "http://localhost:8082/api/users";
         }
+        public static string GetUsersNenabled()
+        {
+            return "http://localhost:8082/api/users/notEnabled";
+        }
         public static string GetStudents()
         {
             return "http://localhost:8082/api/students";
@@ -34,7 +38,10 @@ namespace Reto2G5
         {
             return "http://localhost:8082/api/users/"+dni;
         }
-
+        public static string updateUser(String dni)
+        {
+            return "http://localhost:8082/api/users/" + dni;
+        }
 
     }
 }

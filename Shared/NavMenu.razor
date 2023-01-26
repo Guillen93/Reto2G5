@@ -1,10 +1,6 @@
-﻿@using Reto2G5.Enum;
-@using Reto2G5.Helpers;
-@using Reto2G5.Interfaces;
-@using Reto2G5.Model;
-<div class="top-row ps- navbar navbar-dark">
+﻿<div class="top-row ps- navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">Reto2G5</a>
+        <a class="navbar-brand" href=""><img src="./notix.png" height="35" width="45"/></a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -13,9 +9,6 @@
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <nav class="flex-column">
-        @if (logeado==true)
-        {
-            Console.WriteLine("logeado " + logeado);
             <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                     <span class="oi oi-home" aria-hidden="true"></span> LOGOUT
@@ -39,15 +32,11 @@
         </div>
         
       
-         }
-    </nav>
+       </nav>
 </div>
 
 @code {
-    [Inject]
-    private ILocalStorage localStorage { get; set; }
-    UserResponse userLocal = new UserResponse();
-    private bool logeado=false;
+
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
@@ -55,23 +44,9 @@
     private async void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
-        logeado =await Logged();
-        Console.WriteLine("has llamado "+logeado);
+   
     }
-    private async Task<bool> Logged()
-    {
-        userLocal = IsDataNull.CreateInstanceIFIsNull<UserResponse>(await localStorage.GetValue<UserResponse>(ValuesKeys.Objeto));
-        if (userLocal.accessToken != null)
-        {
-           return true;
-        }
-        else
-        {
-            return false;
-        }
-
-
-    }
+   
 
 
 }

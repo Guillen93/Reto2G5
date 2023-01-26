@@ -104,7 +104,7 @@ else
 
     protected async Task GetStudent()
     {
-
+        Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
         studentList = await Http.GetFromJsonAsync<List<StudentModel>>(Endpoints.GetStudents());
 
         searchUserData = studentList;
