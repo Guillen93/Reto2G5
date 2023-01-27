@@ -58,8 +58,12 @@ else
                         <tr>
                             <td>@user.dni</td>
                             <td>@user.enabled</td>
-                            <td><button type="button" class="btn btn-danger btn-sm" @onclick="() => OpenDeleteDialog(user)">Delete</button></td>
-                            <td><button type="button" class="btn btn btn-info btn-sm" >Update</button></td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm" @onclick="() => OpenDeleteDialog(user)">Delete</button>
+
+                                <button type="button" class="btn btn-info btn-sm" @onclick="() => EditUser(user)">Update</button>
+                                
+                            </td>    
                         </tr>
             }
             </tbody>
@@ -67,7 +71,7 @@ else
         </table>
         @if (DeleteDialogOpen)
             {
-                <ModalDialog Title="¿Estas Seguro?" Text="¿Quieres borrar el usuario?" OnClose="OnDeleteDialogClose"></ModalDialog>
+                <ModalDialog Title="¿Estas Seguro?" Text="¿Quieres borrar el usuario?" OnClose="OnDeleteDialogClose" DialogType="ModalDialog.ModalDialogType.DeleteCancel"></ModalDialog>
             }
 }
 @code {
@@ -77,15 +81,33 @@ else
     protected List<UserModel> userList = new();
     protected List<UserModel> searchUserData = new();
     private string errorMessage;
-
+    private UserModel userUpdate = new UserModel();
     //protected UserModel user = new();
     private UserModel _userModelToDelete;
     protected string SearchString { get; set; } = string.Empty;
+    public bool DeleteDialogOpen { get; set; }
+    public bool popup = false;
+
     protected override async Task OnInitializedAsync()
     {
         userLocal = IsDataNull.CreateInstanceIFIsNull<UserResponse>(await localStorage.GetValue<UserResponse>(ValuesKeys.Objeto));
         await GetUser();
 
+    }
+
+    void ShowPopup()
+    {
+        popup = true;
+    }
+    void ClosePopup()
+    {
+        popup = false;
+    }
+
+    protected void EditUser(UserModel useEdit)
+    {
+        userUpdate = useEdit;
+        popup = true;
     }
 
      protected async Task GetUser()
@@ -130,7 +152,7 @@ else
     }
 
 
-    public bool DeleteDialogOpen { get; set; } 
+   
 
     private async Task OnDeleteDialogClose(bool accepted)
     {
@@ -170,7 +192,7 @@ else
         
         DeleteDialogOpen = false;
         StateHasChanged();
-        //NavManager.NavigateTo("/fetchuserdetails", forceLoad:true);
+        NavManager.NavigateTo("/fetchuserdetails", forceLoad:true);
     }
     private void OpenDeleteDialog(UserModel userModel)
     {
@@ -179,30 +201,7 @@ else
         StateHasChanged();
     }
 
-    //protected async Task GetUser2()
-    //{
-    //    var request = new HttpRequestMessage(HttpMethod.Get, Endpoints.GetUsers());
-    //    // request.SetBrowserRequestMode(BrowserRequestMode.Cors);
-    //    request.Headers.Add("Authorization", "Bearer " + Index.funciones.token);
-    //    request.Headers.Add("Access-Control-Allow-Headers", "http://localhost:8082");
-    //    request.Headers.Add("Access-Control-Allow-Origin", "http://localhost:8082");
-    //    // request.SetBrowserRequestMode(BrowserRequestMode.NoCors);
-    //    // request.SetBrowserRequestCache(BrowserRequestCache.NoStore);
-
-    //    var response = await Http.SendAsync(request);
-
-    //    if (response.IsSuccessStatusCode)
-    //    {
-    //        var apistring = await response.Content.ReadAsStringAsync();
-    //        Console.Write(apistring);
-    //        userList = JsonSerializer.Deserialize<List<UserModel>>(apistring);
-    //    }
-    //    else
-    //    {
-    //        Console.Write(response.StatusCode);
-    //    }
-    //    searchUserData = userList;
-    //}
+   
 
 
 

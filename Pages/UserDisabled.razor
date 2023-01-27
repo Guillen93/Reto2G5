@@ -59,7 +59,12 @@ else
                             <td>@user.dni</td>
                             <td>@user.enabled</td>
                             <td><button type="button" class="btn btn-danger btn-sm" @onclick="() => OpenDeleteDialog(user)">Delete</button></td>
-                            <td><button type="button" class="btn btn btn-info btn-sm" >Update</button></td>
+                            <td>
+                             <a href='/user/update' class="btn btn-info btn-sm" role="button">
+                                <i class="fas fa-user-plus"></i>
+                                     Update
+                            </a>
+                            </td> 
                         </tr>
             }
             </tbody>
@@ -97,7 +102,7 @@ else
         HttpResponseMessage response = await client.GetAsync(Endpoints.GetUsersNenabled());
 
 
-        if (response.IsSuccessStatusCode)
+        if (((int)response.StatusCode) == 200)
         {
 
             var apiString = await response.Content.ReadAsStringAsync();
@@ -105,7 +110,7 @@ else
             userList = JsonSerializer.Deserialize<List<UserModel>>(apiString);
 
             searchUserData = userList;
-        }else
+        }else if (((int)response.StatusCode) == 204)
         {
             NavManager.NavigateTo("/fetchuserdetails");
         }

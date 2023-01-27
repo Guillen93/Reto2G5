@@ -13,5 +13,16 @@ namespace Reto2G5.Model
         public string password { get; set; }
 
         public int roleId { get; set; }
+
+        public bool enabled { get; set; }
+
+        public UserRequest(string dni,string password,bool enabled) 
+        {
+            this.dni = dni;
+            this.password = password;
+            this.enabled = enabled;
+        
+        }
+        public UserRequest() { }
     }
 }

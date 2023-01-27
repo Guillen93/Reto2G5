@@ -36,9 +36,9 @@ namespace Reto2G5
         }
         public static string DeleteUsers(String dni)
         {
-            return "http://localhost:8082/api/users/"+dni;
+            return "http://localhost:8082/api/users/" + dni;
         }
-        public static string updateUser(String dni)
+        public static string UpdateUser(String dni)
         {
             return "http://localhost:8082/api/users/" + dni;
         }
