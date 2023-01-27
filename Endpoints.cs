@@ -14,6 +14,10 @@ namespace Reto2G5
         {
             return "http://localhost:8082/api/users";
         }
+        public static string GetUsersByDni(string dni)
+        {
+            return "http://localhost:8082/api/users/"+dni;
+        }
         public static string GetUsersNenabled()
         {
             return "http://localhost:8082/api/users/notEnabled";

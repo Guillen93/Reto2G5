@@ -45,7 +45,7 @@
                     <div>
                         <p>
                             <label for="password">PassWord:</label>
-                            <InputText @bind-Value=userRequest.password id="password" type="password" class="form-control" size=40 style="width:500px" />
+                            <InputText @bind-Value=userRequest.password id="password" type=@tipo class="form-control" size=40 style="width:500px" />
                             <ValidationMessage For=@(()=>userRequest.password) />
                         </p>
                     </div>
@@ -87,7 +87,7 @@
     [Inject]
     private ILocalStorage localStorage { get; set; }
     UserResponse userLocal = new UserResponse();
-
+    string tipo = "password";
     public bool DeleteDialogOpen { get; set; }
 
     UserRequest userRequest = new UserRequest();
@@ -159,6 +159,18 @@
             }
         }
          
+    }
+    private void mostrarPass()
+    {
+
+        if (tipo == "password")
+        {
+            tipo = "text";
+        }
+        else
+        {
+            tipo = "password";
+        }
     }
        
 }

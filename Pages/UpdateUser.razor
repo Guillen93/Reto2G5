@@ -15,7 +15,9 @@
 @inject HttpClient Http
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavManager
+
 @using System.Net.Http.Headers;
+@using System.Web;
 
 
 <div >
@@ -31,45 +33,32 @@
         <div class="col"></div>
         <div class="col">
             <h3>modificar Usuario</h3>
-                <EditForm Model=userRequest >
+                
+                <EditForm Model=userUpdate >
                     <DataAnnotationsValidator />
                    
                     <div>
                         <p>
-                            <label for="nombre">User_Dni:</label>
-                            <InputText @bind-Value=userRequest.dni id="nombre" class="form-control" size=40 style="width:500px " />
-                            <ValidationMessage For=@(()=>userRequest.dni) />
+                            <label for="nombre">User:</label>
+                            <InputText @bind-Value=userUpdate.dni id="nombre" disabled class="form-control" size=40 style="width:500px " />
+                            <ValidationMessage For=@(()=>userUpdate.dni) />
                         </p>
                     </div>
-
+                   
                     <div>
                         <p>
-                            <label for="password">PassWord:</label>
-                            <InputText @bind-Value=userRequest.password id="password" type="password" class="form-control" size=40 style="width:500px" />
-                            <ValidationMessage For=@(()=>userRequest.password) />
+                            <label for="check">Validar user:</label>
+                            <InputCheckbox id="check" class="form-check" />                          
                         </p>
                     </div>
-                     <div>
-                        <p>
-                            <label for="roles">Role:</label>
-                            <InputSelect class="form-select" @bind-Value="userRequest.roleId" >
-                                <option value="0" selected>Elige un Rol</option>
-                                @foreach(var rol in roleList)
-                                {
-                                    <option value="@rol.roleID">@rol.role</option>
-                                }
-
-                            </InputSelect>
-                        </p>
-
-                    </div>
+                     
 
                     <div class="row align-items-end">
-                        <div class="col"></div>
-                        <div class="col">
-                            <button class="btn btn-danger" style="width:150px" @onclick="createUser">Ir</button>
-                        </div>
-                        <div class="col"></div>
+                       
+                        
+                            <button class="btn btn-success" style="width:150px" >Update</button>
+                            <a href='/fetchuserdetails' class="btn btn-outline-info" role="button">VOLVER</a>
+                        
                     </div>
                 </EditForm>
             </div>
@@ -87,20 +76,25 @@
     [Inject]
     private ILocalStorage localStorage { get; set; }
     UserResponse userLocal = new UserResponse();
+    protected List<RoleModel> roleList = new();
 
     public bool DeleteDialogOpen { get; set; }
+    private string dniUrl;
+    [Inject]
+    public NavigationManager MyNavigationManager {get; set;} = default!;
+    UserUpdate userUpdate ;
 
-    UserRequest userRequest = new UserRequest();
-    protected List<RoleModel> roleList = new();
     String errorMessage;
 
     protected override async Task OnInitializedAsync()
     {
         userLocal = IsDataNull.CreateInstanceIFIsNull<UserResponse>(await localStorage.GetValue<UserResponse>(ValuesKeys.Objeto));
         await GetRoles();
+        Uri url = new Uri(MyNavigationManager.Uri);
+        dniUrl = HttpUtility.ParseQueryString(url.Query).Get("dni");
+        await GetUserDni(dniUrl);
+
     }
-
-
     protected async Task GetRoles()
     {
         HttpClient client = new HttpClient();
@@ -129,36 +123,50 @@
 
         
     }
-
-    async Task createUser()
+    protected async Task GetUserDni(string dniUrl)
     {
-                               
-        HttpResponseMessage response = await Http.PostAsJsonAsync<UserRequest>(Endpoints.CreateUsers(), userRequest);
 
+        HttpClient client = new HttpClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
+
+        HttpResponseMessage response = await client.GetAsync(Endpoints.GetUsersByDni(dniUrl));
         if (response.IsSuccessStatusCode)
         {
 
+            var apiString = await response.Content.ReadAsStringAsync();
 
-            NavManager.NavigateTo("/fetchuserdetails");
-
-
+            userUpdate = JsonSerializer.Deserialize<UserUpdate>(apiString);
         }
-        else
-        {
-            if (((int)response.StatusCode) == 401)
-            {
-                errorMessage = "no puede hacer eso";
-            }
-            if (((int)response.StatusCode) == 409)
-            {
-                errorMessage = "usuario ya registrado";
-            }
-            else
-            {
-                errorMessage = "Something went wrong";
-            }
-        }
-         
     }
-       
+    //async Task UpdatedUser()
+    //{
+                               
+    //    HttpResponseMessage response = await Http.PostAsJsonAsync<UserRequest>(Endpoints.UpdateUser(userRequest.dni), userRequest);
+
+    //    if (response.IsSuccessStatusCode)
+    //    {
+
+
+    //        NavManager.NavigateTo("/fetchuserdetails");
+
+
+    //    }
+    //    //else
+    //    //{
+    //    //    if (((int)response.StatusCode) == 401)
+    //    //    {
+    //    //        errorMessage = "no puede hacer eso";
+    //    //    }
+    //    //    if (((int)response.StatusCode) == 409)
+    //    //    {
+    //    //        errorMessage = "usuario ya registrado";
+    //    //    }
+    //        else
+    //        {
+    //            errorMessage = "Something went wrong";
+    //        }
+    //    //}
+         
+    //}
+    
 }

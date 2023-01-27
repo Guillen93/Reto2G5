@@ -61,7 +61,7 @@ else
                             <td>
                                 <button type="button" class="btn btn-danger btn-sm" @onclick="() => OpenDeleteDialog(user)">Delete</button>
 
-                                <button type="button" class="btn btn-info btn-sm" @onclick="() => EditUser(user)">Update</button>
+                                <button type="button" class="btn btn-info btn-sm" @onclick="() =>GoUpdate(user)">Update</button>
                                 
                             </td>    
                         </tr>
@@ -78,15 +78,17 @@ else
     [Inject]
     private ILocalStorage localStorage { get; set; }
     UserResponse userLocal = new UserResponse();
+
+
     protected List<UserModel> userList = new();
     protected List<UserModel> searchUserData = new();
-    private string errorMessage;
-    private UserModel userUpdate = new UserModel();
-    //protected UserModel user = new();
+
+
+    
     private UserModel _userModelToDelete;
     protected string SearchString { get; set; } = string.Empty;
     public bool DeleteDialogOpen { get; set; }
-    public bool popup = false;
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -95,24 +97,11 @@ else
 
     }
 
-    void ShowPopup()
-    {
-        popup = true;
-    }
-    void ClosePopup()
-    {
-        popup = false;
-    }
 
-    protected void EditUser(UserModel useEdit)
-    {
-        userUpdate = useEdit;
-        popup = true;
-    }
 
-     protected async Task GetUser()
+    protected async Task GetUser()
     {
-           
+
         HttpClient client = new HttpClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
 
@@ -127,14 +116,14 @@ else
             searchUserData = userList;
         }
     }
-   
+
 
 
     protected void FilterUser()
     {
         if (!string.IsNullOrEmpty(SearchString))
         {
-           
+
             userList = searchUserData
                 .Where(x => x.dni.IndexOf(SearchString, StringComparison.OrdinalIgnoreCase) != -1)
                 .ToList();
@@ -152,7 +141,7 @@ else
     }
 
 
-   
+
 
     private async Task OnDeleteDialogClose(bool accepted)
     {
@@ -174,7 +163,7 @@ else
 
                 if (((int)response.StatusCode) == 409)
                 {
-                    errorMessage = "usuario ya existe";
+                    //errorMessage = "usuario ya existe";
                 }
                 else
                 {
@@ -182,18 +171,16 @@ else
                 }
             }
             _userModelToDelete = null;
-            
-            
-        }
-           
-          
-         
-            
-        
+
+
+        }          
+
         DeleteDialogOpen = false;
         StateHasChanged();
         NavManager.NavigateTo("/fetchuserdetails", forceLoad:true);
     }
+
+
     private void OpenDeleteDialog(UserModel userModel)
     {
         DeleteDialogOpen = true;
@@ -201,7 +188,13 @@ else
         StateHasChanged();
     }
 
-   
+    private void GoUpdate(UserModel userModel)
+    {
+        string dni = userModel.dni;
+
+        NavManager.NavigateTo("/user/update?dni=" + dni);
+    }
+
 
 
 

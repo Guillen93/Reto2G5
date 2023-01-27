@@ -1,0 +1,84 @@
+﻿@using Reto2G5.Model;
+<div class="modal fade show" id="myModal" style="display:block; background-color: rgba(10,10,10,.8);" aria-modal="true" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">@Title</h4>
+                <button type="button" class="close" @onclick="ModalCancel" >&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>@Text</p>
+                <EditForm Model=userRequest>
+                    <DataAnnotationsValidator />
+
+                    <div>
+                        <p>
+                            <label for="nombre">User_Dni:</label>
+                            <InputText @bind-Value=userRequest.dni id="nombre" class="form-control" size=40 style="width:500px " />
+                            <ValidationMessage For=@(()=>userRequest.dni) />
+                        </p>
+                    </div>
+
+                    <div>
+                        <p>
+                            <InputCheckbox @bind-Value=userRequest.enabled id="enabled" type="check" class="form-check" >Habilitar usuario</InputCheckbox>
+                           
+                        </p>
+                    </div>
+                                     
+                </EditForm>
+
+            </div>
+            <div class="modal-footer">
+               @* <button type="button" class="btn btn-primary" @onclick="ModalOk">OK</button>*@
+                @switch (DialogType)
+                {
+                    case ModalDialogType.Ok:
+                        <button type="button" class="btn btn-primary" @onclick="ModalOk">OK</button>
+                        break;
+
+                    case ModalDialogType.OkCancel:
+                        <button type="button" class="btn" @onclick="ModalCancel">Cancel</button>
+                        <button type="button" class="btn btn-primary" @onclick="ModalOk">OK</button>
+                        break;
+
+                    case ModalDialogType.DeleteCancel:
+                        <button type="button" class="btn" @onclick="ModalCancel">Cancel</button>
+                        <button type="button" class="btn btn-danger" @onclick="ModalOk">Delete</button>
+                        break;
+                }
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@code{
+    [Parameter]
+    public string Title { get; set; }
+    [Parameter]
+    public string Text { get; set; }
+    [Parameter]
+    public EventCallback<bool> OnClose { get; set; }
+
+    [Parameter]
+    public ModalDialogType DialogType { get; set; }
+
+    public UserRequest userRequest;
+
+    private Task ModalCancel()
+    {
+        return OnClose.InvokeAsync(false);
+    }
+
+    private Task ModalOk()
+    {
+        return OnClose.InvokeAsync(true);
+    }
+    public enum ModalDialogType
+    {
+        Ok,
+        OkCancel,
+        DeleteCancel
+    }
+}
