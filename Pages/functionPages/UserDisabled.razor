@@ -58,13 +58,12 @@ else
                         <tr>
                             <td>@user.dni</td>
                             <td>@user.enabled</td>
-                            <td><button type="button" class="btn btn-danger btn-sm" @onclick="() => OpenDeleteDialog(user)">Delete</button></td>
                             <td>
-                             <a href='/user/update' class="btn btn-info btn-sm" role="button">
-                                <i class="fas fa-user-plus"></i>
-                                     Update
-                            </a>
-                            </td> 
+                                <button type="button" class="btn btn-danger btn-sm" @onclick="() => OpenDeleteDialog(user)">Delete</button>
+
+                                <button type="button" class="btn btn-info btn-sm" @onclick="() =>GoUpdate(user)">Update</button>
+                                
+                            </td>    
                         </tr>
             }
             </tbody>
@@ -172,11 +171,7 @@ else
             _userModelToDelete = null;
             
             
-        }
-           
-          
-         
-            
+        }      
         
         DeleteDialogOpen = false;
         StateHasChanged();
@@ -189,6 +184,11 @@ else
         StateHasChanged();
     }
 
-       
+    private void GoUpdate(UserModel userModel)
+    {
+        string dni = userModel.dni;
+
+        NavManager.NavigateTo("/user/update?dni=" + dni);
+    }
 
 }

@@ -1,0 +1,263 @@
+﻿@page "/user/update"
+
+
+@using System.ComponentModel.DataAnnotations
+@using Reto2G5.Enum;
+@using Reto2G5.Helpers;
+@using Reto2G5.Interfaces;
+@using Reto2G5.Model;
+@using Reto2G5.componets;
+@using System.Text.Json;
+@using System.Text.Json.Serialization;
+@using System.Net;
+@using System.Text;
+
+@inject HttpClient Http
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavManager
+
+@using System.Net.Http.Headers;
+@using System.Web;
+
+
+<div >
+   
+
+<div class="container">
+    <div class="row align-items-start">
+        <div class="col"> </div>
+       
+        <div class="col"> </div>
+    </div>
+    <div class="row align-items-center">
+        <div class="col"></div>
+        <div class="col">
+            <h3>modificar Usuario</h3>
+                
+                <EditForm EditContext="@editContext" >
+                                     
+                    <div>
+                        <p>
+                            <label for="nombre">User:</label>
+                            <InputText @bind-Value=userUpdate.dni id="nombre" disabled class="form-control" size=40 style="width:500px " />
+                        </p>
+                    </div>
+                   
+                    <div>
+                        <p>
+                            <label for="check">Validar user:</label>
+                            <InputCheckbox @bind-Value=userUpdate.enabled id="check" class="form-check" />
+                            
+                        </p>
+                    </div>
+                     
+
+                    <div class="row align-items-end">
+
+
+                        <button class="btn btn-success" style="width:150px" @onclick="UpdatedUser">Update</button>
+                        <a href='/fetchuserdetails' style="width:150px" class="btn btn-outline-info" role="button">VOLVER</a>
+                        
+                    </div>
+                </EditForm>
+            </div>
+        <div class="col"> </div>
+            <p>@errorMessage</p>
+           
+    </div>
+    
+</div>
+
+</div>
+
+
+@code {
+    [Inject]
+    private ILocalStorage localStorage { get; set; }
+    UserResponse userLocal = new UserResponse();
+
+    [Inject]
+    public NavigationManager MyNavigationManager { get; set; } = default!;
+    private string dniUrl;
+
+    private EditContext editContext;
+    public bool DeleteDialogOpen { get; set; }
+    UserUpdate userUpdate ;
+    String errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        userLocal = IsDataNull.CreateInstanceIFIsNull<UserResponse>(await localStorage.GetValue<UserResponse>(ValuesKeys.Objeto));
+        Uri url = new Uri(MyNavigationManager.Uri);
+        dniUrl = HttpUtility.ParseQueryString(url.Query).Get("dni");
+        await GetUserDni(dniUrl);
+        editContext = new (userUpdate);
+    }
+
+    protected async Task GetUserDni(string dniUrl)
+    {
+        HttpClient client = new HttpClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
+
+        HttpResponseMessage response = await client.GetAsync(Endpoints.GetUsersByDni(dniUrl));
+        if (response.IsSuccessStatusCode)
+        {
+            var apiString = await response.Content.ReadAsStringAsync();
+            userUpdate = JsonSerializer.Deserialize<UserUpdate>(apiString);
+        }
+    }
+
+    async Task UpdatedUser()
+    {
+        HttpClient client = new HttpClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
+
+        HttpResponseMessage response = await client.PutAsJsonAsync<UserUpdate>(Endpoints.UpdateUser(userUpdate.dni), userUpdate);
+
+
+        if (response.IsSuccessStatusCode)
+        {
+            ProfessorModel professor = new ProfessorModel();
+            StudentModel student = new StudentModel();
+
+            HttpClient HttpCl = new HttpClient();
+            HttpCl.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
+
+            HttpResponseMessage responseP = await HttpCl.GetAsync(Endpoints.GetProfessorsByDni(userUpdate.dni));
+            if (responseP.IsSuccessStatusCode)
+            {
+
+                var apiString = await responseP.Content.ReadAsStringAsync();
+
+                professor = JsonSerializer.Deserialize<ProfessorModel>(apiString);
+
+                if (userUpdate.enabled == true) {
+
+                    eMailModel mail = new eMailModel();
+                    mail.recipient = professor.email;
+                    mail.subject = "Activacion de Usuario";
+                    mail.msgBody = "Bienvenidal al sistema " + professor.name + "\n Su cuenta ha sido activada con exito.\n Ya puede Iniciar sesion en la aplicacion de su telefono.";
+
+                    string sendMail = "http://localhost:8082/api/sendMail";
+                    HttpClient HttpClP = new HttpClient();
+                    var responseMP = await HttpClP.PostAsJsonAsync<eMailModel>(sendMail, mail);
+
+
+                    if (responseMP.IsSuccessStatusCode)
+                    {
+                        Console.WriteLine("EMail enviado");
+                        NavManager.NavigateTo("/fetchuserdetails");
+                    }else
+                    {
+                        Console.WriteLine("Something went wrong");
+                    }
+
+
+                }
+                else
+                {
+                    eMailModel mail = new eMailModel();
+                    mail.recipient = professor.email;
+                    mail.subject="Activacion de Usuario";
+                    mail.msgBody="Usuario "+professor.name+ "\n Su cuenta ha sido desactivada. \n si no sabe el motivo o tiene cualquier duda mande un mail a notixDam@gmail.com.";
+                    
+                    string sendMail = "http://localhost:8082/api/sendMail";
+                    HttpClient HttpClP = new HttpClient();
+                    var responseMP = await HttpClP.PostAsJsonAsync(sendMail, mail);
+
+                    if (responseMP.IsSuccessStatusCode)
+                    {
+                        Console.WriteLine("EMail enviado");
+                        NavManager.NavigateTo("/fetchuserdetails");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Something went wrong");
+                    }
+                }
+            }
+            else if (((int)response.StatusCode) == 204)
+            {
+                HttpClient HttpClS = new HttpClient();
+                HttpClS.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
+
+                var responseS = await HttpClS.GetAsync(Endpoints.GetStudentsByDni(userUpdate.dni));
+                if (responseS.IsSuccessStatusCode)
+                {
+
+                    var apiString = await responseS.Content.ReadAsStringAsync();
+
+                    student = JsonSerializer.Deserialize<StudentModel>(apiString);
+
+                    if (userUpdate.enabled == true) {
+
+                        eMailModel mail = new eMailModel();
+                        mail.recipient = student.email;
+                        mail.subject = "Activacion de Usuario";
+                        mail.msgBody="Bienvenid@ al sistema "+student.name+"\n Su cuenta ha sido activada con exito. \n Ya puede Iniciar sesion en la aplicacion de su telefono.";
+
+                        string sendMail = "http://localhost:8082/api/sendMail";
+                        var responseMS = await client.PostAsJsonAsync(sendMail, mail);
+
+                        if (responseMS.IsSuccessStatusCode)
+                        {
+                            Console.WriteLine("EMail enviado");
+                            NavManager.NavigateTo("/fetchuserdetails");
+                        }else
+                        {
+                            Console.WriteLine("Something went wrong");
+                        }
+
+
+                    }
+                    else
+                    {
+                        eMailModel mail = new eMailModel();
+                        mail.recipient = student.email;
+                        mail.subject = "Activacion de Usuario";
+                        mail.msgBody = "Usuario " + student.name + "\n Su cuenta ha sido desactivada. \n si no sabe el motivo o tiene cualquier duda mande un mail a notixDam@gmail.com.";
+                        string sendMail = "http://localhost:8082/api/sendMail";
+                        var responseMS = await client.PostAsJsonAsync(sendMail, mail);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            Console.WriteLine("EMail enviado");
+                            NavManager.NavigateTo("/fetchuserdetails");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Something went wrong");
+                        }
+                    }
+                }
+                else if (((int)response.StatusCode) == 204)
+                {
+                    Console.WriteLine("el usuario no existe");
+                }
+                else if (((int)response.StatusCode) == 401)
+                {
+                    Console.WriteLine("no tiene permiso para hacer esto");
+                }else
+                {
+                    Console.WriteLine("Something went wrong");
+                }
+            }
+
+     
+        }
+        else
+        {
+            if (((int)response.StatusCode) == 401)
+            {
+
+                errorMessage = "no puede hacer eso";
+            }
+            else
+            {
+                errorMessage = "Something went wrong";
+            }
+        }
+         
+    }
+    
+}

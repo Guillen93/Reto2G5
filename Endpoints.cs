@@ -5,11 +5,15 @@ namespace Reto2G5
 {
     public class Endpoints
     {
-        public static string Login2()
+        public static string Login()
         {
             return "http://localhost:8082/api/users/login";
         }
-     
+        public static string SendMail()
+        {
+            return "http://localhost:8082/api/sendMail";
+        }
+
         public static string GetUsers()
         {
             return "http://localhost:8082/api/users";
@@ -26,9 +30,17 @@ namespace Reto2G5
         {
             return "http://localhost:8082/api/students";
         }
+        public static string GetStudentsByDni(String dni)
+        {
+            return "http://localhost:8082/api/students/"+dni;
+        }
         public static string GetProfessors()
         {
             return "http://localhost:8082/api/professors";
+        }
+        public static string GetProfessorsByDni(String dni)
+        {
+            return "http://localhost:8082/api/professors/"+dni;
         }
         public static string CreateUsers()
         {
@@ -46,6 +58,6 @@ namespace Reto2G5
         {
             return "http://localhost:8082/api/users/" + dni;
         }
-
+       
     }
 }

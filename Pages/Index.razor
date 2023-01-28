@@ -65,7 +65,7 @@
             </div>
             <div class="col">
                 <br /><br />
-                <button class="btn btn-default" type="button" @onclick="mostrarPass">
+                <button class="btn btn-outline-secondary" type="button" @onclick="mostrarPass">
                     mostrar
                 </button>
             </div>
@@ -98,7 +98,7 @@
     async Task<UserResponse> login()
     {
 
-        var response = await Http.PostAsJsonAsync<UserRequest>(Endpoints.Login2(), userRequest);
+        var response = await Http.PostAsJsonAsync<UserRequest>(Endpoints.Login(), userRequest);
 
         if (response.IsSuccessStatusCode)
         {
