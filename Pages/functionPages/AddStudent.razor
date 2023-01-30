@@ -30,7 +30,7 @@
         <div class="col"></div>
         <div class="col">
             <h3>Añadir Estudiante</h3>
-                <EditForm Model=studentCreate >
+                <EditForm Model=studentCreate>
                     <DataAnnotationsValidator />
 
                     <div>
@@ -97,7 +97,7 @@
                     <div>
                         <p>
                             <label for="fecha">Fecha de nacimiento:</label>
-                            <input type="date" name="fecha" value="@fecha" >
+                            <input type="date" name="fecha" @bind-value=studentCreate.bornDate >
                         </p>
                     </div>
                     @*<div>
@@ -181,11 +181,11 @@
         studentRequest.surname = studentCreate.surname;
         studentRequest.email = studentCreate.email;
         studentRequest.nationality = studentCreate.nationality;
-        studentRequest.bornDate = fecha.ToString("yyyy-MM-dd");
-        Console.WriteLine(fecha);
+        studentRequest.bornDate = studentCreate.bornDate.ToString("yyyy-MM-dd");
+        Console.WriteLine(studentCreate.bornDate.ToString("yyyy-MM-dd"));
         Console.WriteLine(studentRequest.bornDate);
         studentRequest.photo = "foto";
-        studentRequest.phone = phone.ToString();
+        studentRequest.phone = studentCreate.phone;
         HttpResponseMessage responseP = await Http.PostAsJsonAsync<StudentRequest>(Endpoints.CreateStudent(), studentRequest);
 
         if (responseP.IsSuccessStatusCode)

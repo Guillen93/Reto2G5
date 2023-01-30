@@ -59,9 +59,9 @@ else
                             <td>@user.dni</td>
                             <td>@user.enabled</td>
                             <td>
-                                <button type="button" class="btn btn-danger btn-sm" @onclick="() => OpenDeleteDialog(user)">Delete</button>
+                                <button type="button" class="btn btn-outline-danger" @onclick="() => OpenDeleteDialog(user)">Delete</button>
 
-                                <button type="button" class="btn btn-info btn-sm" @onclick="() =>GoUpdate(user)">Update</button>
+                                <button type="button" class="btn btn-warning btn-sm" @onclick="() =>GoUpdate(user)">Update</button>
                                 
                             </td>    
                         </tr>

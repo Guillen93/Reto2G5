@@ -21,12 +21,12 @@
     <div class="col-md-6">
         <a href='/professor/add' class="btn btn-success btn-sm" role="button">
             <i class="fas fa-user-plus"></i>
-            Add User
+            Add Professor
         </a>
     </div>
 
     <div class="input-group col">
-        <input type="text" class="form-control" placeholder="Search user by dni"
+        <input type="text" class="form-control" placeholder="Search user by name"
                @bind="SearchString" @bind:event="oninput" @onkeyup="FilterUser" />
         @if (SearchString.Length > 0)
         {
@@ -74,7 +74,7 @@ else
                     
                     
                     <td><button type="button" class="btn btn-outline-danger btn-sm" @onclick="() => OpenDeleteDialog(professor)">Delete</button></td>
-                    <td><button type="button" class="btn btn btn-info btn-sm" @onclick="() => OpenDeleteDialog(professor)">Update</button></td>
+                    <td><button type="button" class="btn btn-warning btn-sm" @onclick="() => OpenDeleteDialog(professor)">Update</button></td>
                 </tr>
             }
         </tbody>
@@ -120,7 +120,7 @@ else
         {
 
             professorList = searchUserData
-                .Where(x => x.professorDni.IndexOf(SearchString, StringComparison.OrdinalIgnoreCase) != -1)
+                .Where(x => x.name.IndexOf(SearchString, StringComparison.OrdinalIgnoreCase) != -1)
                 .ToList();
         }
         else

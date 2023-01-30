@@ -22,12 +22,12 @@
     <div class="col-md-6">
         <a href='/student/add' class="btn btn-success btn-sm" role="button">
             <i class="fas fa-user-plus"></i>
-            Add User
+            Add Student
         </a>
     </div>
 
     <div class="input-group col">
-        <input type="text" class="form-control" placeholder="Search user by dni"
+        <input type="text" class="form-control" placeholder="Search user by name"
                @bind="SearchString" @bind:event="oninput" @onkeyup="FilterUser" />
         @if (SearchString.Length > 0)
         {
@@ -73,8 +73,8 @@ else
                     <th>@student.email</th>
                     <th>@student.phone</th>
                     <th>@student.photo</th>
-                    <td><button type="button" class="btn btn-warning btn-sm" @onclick="() => OpenDeleteDialog(student)">Delete</button></td>
-                    <td><button type="button" class="btn btn btn-info btn-sm" @onclick="() => OpenDeleteDialog(student)">Update</button></td>
+                    <td><button type="button" class="btn btn-outline-danger" @onclick="() => OpenDeleteDialog(student)">Delete</button></td>
+                    <td><button type="button" class="btn btn-warning btn-sm" @onclick="() => OpenDeleteDialog(student)">Update</button></td>
                 </tr>
             }
         </tbody>
@@ -119,7 +119,7 @@ else
         {
 
             studentList = searchUserData
-                .Where(x => x.studentDni.IndexOf(SearchString, StringComparison.OrdinalIgnoreCase) != -1)
+                .Where(x => x.name.IndexOf(SearchString, StringComparison.OrdinalIgnoreCase) != -1)
                 .ToList();
         }
         else
