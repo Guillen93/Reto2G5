@@ -50,6 +50,10 @@ namespace Reto2G5
         {
             return "http://localhost:8082/api/professors/create";
         }
+        public static string CreateStudent()
+        {
+            return "http://localhost:8082/api/students/create";
+        }
         public static string GetRoles()
         {
             return "http://localhost:8082/api/roles";

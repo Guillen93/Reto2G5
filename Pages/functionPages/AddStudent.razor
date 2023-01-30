@@ -1,4 +1,4 @@
-﻿@page "/professor/add"
+﻿@page "/student/add"
 
 @using System.ComponentModel.DataAnnotations
 @using Reto2G5.Enum;
@@ -29,23 +29,23 @@
     <div class="row align-items-center">
         <div class="col"></div>
         <div class="col">
-            <h3>Añadir Profesor</h3>
-                <EditForm Model=professorCreate >
+            <h3>Añadir Estudiante</h3>
+                <EditForm Model=studentCreate >
                     <DataAnnotationsValidator />
 
                     <div>
                         <p>
                             <label for="id">User_Dni:</label>
-                            <InputText @bind-Value=professorCreate.dni id="id" class="form-control" size=40 style="width:500px " />
-                            <ValidationMessage For=@(()=>professorCreate.dni) />
+                            <InputText @bind-Value=studentCreate.studentDni id="id" class="form-control" size=40 style="width:500px " />
+                            <ValidationMessage For=@(()=>studentCreate.studentDni) />
                         </p>
                     </div>
 
                     <div>
                         <p>
                             <label for="password">PassWord:</label>
-                            <InputText @bind-Value=professorCreate.password id="password" type=@tipo class="form-control" size=40 style="width:500px" />
-                            <ValidationMessage For=@(()=>professorCreate.password) />
+                            <InputText @bind-Value=studentCreate.password id="password" type=@tipo class="form-control" size=40 style="width:500px" />
+                            <ValidationMessage For=@(()=>studentCreate.password) />
                         </p>
                         <p>
                             <button class="btn btn-outline-secondary" type="button" @onclick="mostrarPass">
@@ -56,44 +56,62 @@
                     <div>
                         <p>
                             <label for="nombre">Nombre:</label>
-                            <InputText @bind-Value=professorCreate.name id="nombre" class="form-control" size=40 style="width:500px " />
-                            <ValidationMessage For=@(()=>professorCreate.name) />
+                            <InputText @bind-Value=studentCreate.name id="nombre" class="form-control" size=40 style="width:500px " />
+                            <ValidationMessage For=@(()=>studentCreate.name) />
                         </p>
                     </div>
                      <div>
                         <p>
                             <label for="apellido">Apellido:</label>
-                            <InputText @bind-Value=professorCreate.surname id="apellido" class="form-control" size=40 style="width:500px " />
-                            <ValidationMessage For=@(()=>professorCreate.surname) />
+                            <InputText @bind-Value=studentCreate.surname id="apellido" class="form-control" size=40 style="width:500px " />
+                            <ValidationMessage For=@(()=>studentCreate.surname) />
                        </p>
                     </div>
                     <div>
                         <p>
                             <label for="email">Email:</label>
-                            <InputText @bind-Value=professorCreate.email id="email" class="form-control" size=40 style="width:500px " />
-                            <ValidationMessage For=@(()=>professorCreate.email) />
+                            <InputText @bind-Value=studentCreate.email id="email" class="form-control" size=40 style="width:500px " />
+                            <ValidationMessage For=@(()=>studentCreate.email) />
                         </p>
                     </div>
                     <div>
                         <p>
                             <label for="nationaility">Nacionalidad:</label>
-                            <InputText @bind-Value=professorCreate.nationality id="nacionalidad" class="form-control" size=40 style="width:500px " />
-                            <ValidationMessage For=@(()=>professorCreate.nationality) />
+                            <InputText @bind-Value=studentCreate.nationality id="nacionalidad" class="form-control" size=40 style="width:500px " />
+                            <ValidationMessage For=@(()=>studentCreate.nationality) />
                         </p>
                     </div>
-
                     <div>
                         <p>
-                            <label for="adress">Direccion:</label>
-                            <InputText @bind-Value=professorCreate.addres id="adress" class="form-control" size=40 style="width:500px " />
-                            <ValidationMessage For=@(()=>professorCreate.addres) />
+                            <label for="telefono">telefono:</label>
+                            <InputText @bind-Value=studentCreate.phone id="telefono" class="form-control" size=40 style="width:500px " />
+                            
                         </p>
                     </div>
+                    @*<div>
+                        <p>
+                            <label for="telefono">Telefono:</label>
+                            <Input type="number" value="@phone" id="telefono" class="form-control" size=40 style="width:500px " />
+                        </p>
+                    </div>*@
+                    <div>
+                        <p>
+                            <label for="fecha">Fecha de nacimiento:</label>
+                            <input type="date" name="fecha" value="@fecha" >
+                        </p>
+                    </div>
+                    @*<div>
+                        <p>
+                            <label for="fechNac">Fecha de nacimiento:</label>
+                            <InputDate  @bind-Value=studentCreate.bornDate  class="form-check"/>
+                            
+                        </p>
+                    </div>*@
 
                     <div class="row align-items-end">
                         <div class="col"></div>
                         <div class="col">
-                            <button class="btn btn-danger" style="width:150px" @onclick="createUser">Añadir profesor</button>
+                            <button class="btn btn-danger" style="width:150px" @onclick="createUser">Añadir estudiante:</button>
                         </div>
                         <div class="col"></div>
                     </div>
@@ -114,10 +132,12 @@
     private ILocalStorage localStorage { get; set; }
     UserResponse userLocal = new UserResponse();
     string tipo = "password";
+    DateOnly fecha = new DateOnly();
+    int phone = new int();
     public bool DeleteDialogOpen { get; set; }
     UserRequest userRequest = new UserRequest();
-    ProfessorRequest professorRequest = new ProfessorRequest();
-    ProfessorCreate professorCreate = new ProfessorCreate();
+    StudentRequest studentRequest = new StudentRequest();
+    StudentCreate studentCreate = new StudentCreate();
     String errorMessage;
 
     protected override async Task OnInitializedAsync()
@@ -129,9 +149,9 @@
     async Task createUser()
     {
 
-        userRequest.dni = professorCreate.dni;
-        userRequest.password = professorCreate.password;
-        userRequest.roleId = 2;
+        userRequest.dni = studentCreate.studentDni;
+        userRequest.password = studentCreate.password;
+        userRequest.roleId = 3;
 
         HttpResponseMessage response = await Http.PostAsJsonAsync<UserRequest>(Endpoints.CreateUsers(), userRequest);
 
@@ -156,23 +176,25 @@
             }
         }
 
-        professorRequest.professorDni = professorCreate.dni;
-        professorRequest.name = professorCreate.name;
-        professorRequest.surname = professorCreate.surname;
-        professorRequest.email = professorCreate.email;
-        professorRequest.nationality = professorCreate.nationality;
-        professorRequest.addres = professorCreate.addres;
-        professorRequest.photo = null;
-
-        HttpResponseMessage responseP = await Http.PostAsJsonAsync<ProfessorRequest>(Endpoints.CreateProfessor(), professorRequest);
+        studentRequest.studentDni = studentCreate.studentDni;
+        studentRequest.name = studentCreate.name;
+        studentRequest.surname = studentCreate.surname;
+        studentRequest.email = studentCreate.email;
+        studentRequest.nationality = studentCreate.nationality;
+        studentRequest.bornDate = fecha.ToString("yyyy-MM-dd");
+        Console.WriteLine(fecha);
+        Console.WriteLine(studentRequest.bornDate);
+        studentRequest.photo = "foto";
+        studentRequest.phone = phone.ToString();
+        HttpResponseMessage responseP = await Http.PostAsJsonAsync<StudentRequest>(Endpoints.CreateStudent(), studentRequest);
 
         if (responseP.IsSuccessStatusCode)
         {
 
             eMailModel mail = new eMailModel();
-            mail.recipient = professorCreate.email;
+            mail.recipient = studentCreate.email;
             mail.subject = "Creacion de Usuario";
-            mail.msgBody = " Bienvenidal al sistema " + professorCreate.name + "\n Su cuenta ha sido creada con exito.\n en breve recibira confirmacion de la activacion de su cuenta.";
+            mail.msgBody = " Bienvenidal al sistema " + studentCreate.name + "\n Su cuenta ha sido creada con exito.\n en breve recibira confirmacion de la activacion de su cuenta.";
 
             string sendMail = "http://localhost:8082/api/sendMail";
             HttpClient HttpClP = new HttpClient();
@@ -182,7 +204,7 @@
             if (responseMP.IsSuccessStatusCode)
             {
                 Console.WriteLine("EMail enviado");
-                NavManager.NavigateTo("/fetchProfessordetails");
+                NavManager.NavigateTo("/fetchstudentdetails");
             }
             else
             {
@@ -224,11 +246,4 @@
         }
     }
 
-    public class Pais
-    {
-        public string countryName { get; set; }
-        public string population { get; set; }
-        public string capital { get; set; }
-        public string continentName { get; set; }
-    }
 }

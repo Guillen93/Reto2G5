@@ -1,10 +1,9 @@
 ﻿namespace Reto2G5.Model
 {
-    public class StudentCreate
+    public class StudentModel
     {
         
             public string studentDni { get; set; }
-            public string password { get; set; }
             public string name { get; set; }
             public string surname { get; set; }
             public string bornDate { get; set; }
