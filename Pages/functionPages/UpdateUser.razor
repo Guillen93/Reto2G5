@@ -113,25 +113,25 @@
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
 
         HttpResponseMessage response = await client.PutAsJsonAsync<UserUpdate>(Endpoints.UpdateUser(userUpdate.dni), userUpdate);
-
-
+        bool esProfe = false;
+        bool esStudent = false;
         if (response.IsSuccessStatusCode)
         {
             ProfessorModel professor = new ProfessorModel();
-            StudentModel student = new StudentModel();
+
 
             HttpClient HttpCl = new HttpClient();
             HttpCl.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
 
             HttpResponseMessage responseP = await HttpCl.GetAsync(Endpoints.GetProfessorsByDni(userUpdate.dni));
-            if (responseP.IsSuccessStatusCode)
+            if (((int)responseP.StatusCode) == 200)
             {
-
                 var apiString = await responseP.Content.ReadAsStringAsync();
 
                 professor = JsonSerializer.Deserialize<ProfessorModel>(apiString);
 
-                if (userUpdate.enabled == true) {
+                if (userUpdate.enabled == true)
+                {
 
                     eMailModel mail = new eMailModel();
                     mail.recipient = professor.email;
@@ -147,7 +147,8 @@
                     {
                         Console.WriteLine("EMail enviado");
                         NavManager.NavigateTo("/fetchuserdetails");
-                    }else
+                    }
+                    else
                     {
                         Console.WriteLine("Something went wrong");
                     }
@@ -158,9 +159,9 @@
                 {
                     eMailModel mail = new eMailModel();
                     mail.recipient = professor.email;
-                    mail.subject="Activacion de Usuario";
-                    mail.msgBody="Usuario "+professor.name+ "\n Su cuenta ha sido desactivada. \n si no sabe el motivo o tiene cualquier duda mande un mail a notixDam@gmail.com.";
-                    
+                    mail.subject = "Activacion de Usuario";
+                    mail.msgBody = "Usuario " + professor.name + "\n Su cuenta ha sido desactivada. \n si no sabe el motivo o tiene cualquier duda mande un mail a notixDam@gmail.com.";
+
                     string sendMail = "http://localhost:8082/api/sendMail";
                     HttpClient HttpClP = new HttpClient();
                     var responseMP = await HttpClP.PostAsJsonAsync(sendMail, mail);
@@ -175,26 +176,28 @@
                         Console.WriteLine("Something went wrong");
                     }
                 }
+
             }
-            else if (((int)response.StatusCode) == 204)
+            else if (((int)responseP.StatusCode) == 204)
             {
+                StudentModel student = new StudentModel();
                 HttpClient HttpClS = new HttpClient();
                 HttpClS.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
 
                 var responseS = await HttpClS.GetAsync(Endpoints.GetStudentsByDni(userUpdate.dni));
                 if (responseS.IsSuccessStatusCode)
                 {
-
                     var apiString = await responseS.Content.ReadAsStringAsync();
 
                     student = JsonSerializer.Deserialize<StudentModel>(apiString);
 
-                    if (userUpdate.enabled == true) {
+                    if (userUpdate.enabled == true)
+                    {
 
                         eMailModel mail = new eMailModel();
                         mail.recipient = student.email;
                         mail.subject = "Activacion de Usuario";
-                        mail.msgBody="Bienvenid@ al sistema "+student.name+"\n Su cuenta ha sido activada con exito. \n Ya puede Iniciar sesion en la aplicacion de su telefono.";
+                        mail.msgBody = "Bienvenid@ al sistema " + student.name + "\n Su cuenta ha sido activada con exito. \n Ya puede Iniciar sesion en la aplicacion de su telefono.";
 
                         string sendMail = "http://localhost:8082/api/sendMail";
                         var responseMS = await client.PostAsJsonAsync(sendMail, mail);
@@ -203,12 +206,11 @@
                         {
                             Console.WriteLine("EMail enviado");
                             NavManager.NavigateTo("/fetchuserdetails");
-                        }else
+                        }
+                        else
                         {
                             Console.WriteLine("Something went wrong");
                         }
-
-
                     }
                     else
                     {
@@ -229,19 +231,29 @@
                             Console.WriteLine("Something went wrong");
                         }
                     }
+
+
+
+
                 }
-                else if (((int)response.StatusCode) == 204)
+                else if (((int)responseS.StatusCode) == 204)
                 {
                     Console.WriteLine("el usuario no existe");
                 }
-                else if (((int)response.StatusCode) == 401)
+                else if (((int)responseS.StatusCode) == 401)
                 {
                     Console.WriteLine("no tiene permiso para hacer esto");
                 }else
                 {
                     Console.WriteLine("Something went wrong");
                 }
-            }
+            }else if (((int)responseP.StatusCode) == 401)
+                {
+                    Console.WriteLine("no tiene permiso para hacer esto");
+                }else
+                {
+                    Console.WriteLine("Something went wrong");
+                }
 
      
         }

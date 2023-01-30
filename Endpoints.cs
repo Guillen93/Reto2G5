@@ -46,6 +46,10 @@ namespace Reto2G5
         {
             return "http://localhost:8082/api/users/signup";
         }
+        public static string CreateProfessor()
+        {
+            return "http://localhost:8082/api/professors/create";
+        }
         public static string GetRoles()
         {
             return "http://localhost:8082/api/roles";
