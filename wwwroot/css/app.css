@@ -12,6 +12,11 @@ a, .btn-link {
     color: #0071c1;
 }
 
+.studentCard {
+    margin: 5px;
+    width: 15%;
+    text-align: center;
+}
 .btn-primary {
     color: #fff;
     background-color: #1b6ec2;
@@ -45,6 +50,10 @@ a, .btn-link {
     position: fixed;
     width: 100%;
     z-index: 1000;
+}
+
+.moreinfo {
+    padding-bottom: 10px;
 }
 
     #blazor-error-ui .dismiss {

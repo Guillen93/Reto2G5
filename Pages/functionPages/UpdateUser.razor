@@ -34,7 +34,7 @@
         <div class="col">
             <h3>modificar Usuario</h3>
                 
-                <EditForm EditContext="@editContext" >
+                <EditForm Model="userUpdate">
                                      
                     <div>
                         <p>
@@ -55,8 +55,9 @@
                     <div class="row align-items-end">
 
 
-                        <button class="btn btn-success" style="width:150px" @onclick="UpdatedUser">Update</button>
-                        <a href='/fetchuserdetails' style="width:150px" class="btn btn-outline-info" role="button">VOLVER</a>
+                        <button class="btn btn-success"  @onclick="UpdatedUser">Update</button>
+                        <p></p>
+                        <a href='/fetchuserdetails' class="btn btn-primary" role="button">Volver</a>
                         
                     </div>
                 </EditForm>
@@ -80,7 +81,7 @@
     public NavigationManager MyNavigationManager { get; set; } = default!;
     private string dniUrl;
 
-    private EditContext editContext;
+
     public bool DeleteDialogOpen { get; set; }
     UserUpdate userUpdate ;
     String errorMessage;
@@ -91,7 +92,7 @@
         Uri url = new Uri(MyNavigationManager.Uri);
         dniUrl = HttpUtility.ParseQueryString(url.Query).Get("dni");
         await GetUserDni(dniUrl);
-        editContext = new (userUpdate);
+
     }
 
     protected async Task GetUserDni(string dniUrl)
@@ -146,7 +147,7 @@
                     if (responseMP.IsSuccessStatusCode)
                     {
                         Console.WriteLine("Email enviado");
-                        NavManager.NavigateTo("/fetchuserdetails");
+                        NavManager.NavigateTo("/fetchuserDisabled");
                     }
                     else
                     {
@@ -169,7 +170,7 @@
                     if (responseMP.IsSuccessStatusCode)
                     {
                         Console.WriteLine("EMail enviado");
-                        NavManager.NavigateTo("/fetchuserdetails");
+                        NavManager.NavigateTo("/fetchuserDisabled");
                     }
                     else
                     {
@@ -205,7 +206,7 @@
                         if (responseMS.IsSuccessStatusCode)
                         {
                             Console.WriteLine("EMail enviado");
-                            NavManager.NavigateTo("/fetchuserdetails");
+                            NavManager.NavigateTo("/fetchuserDisabled");
                         }
                         else
                         {
@@ -224,7 +225,7 @@
                         if (response.IsSuccessStatusCode)
                         {
                             Console.WriteLine("EMail enviado");
-                            NavManager.NavigateTo("/fetchuserdetails");
+                            NavManager.NavigateTo("/fetchuserDisabled");
                         }
                         else
                         {
@@ -248,18 +249,20 @@
                     Console.WriteLine("Something went wrong");
                 }
             }else if (((int)responseP.StatusCode) == 401)
-                {
-                    Console.WriteLine("no tiene permiso para hacer esto");
-                }else
-                {
-                    Console.WriteLine("Something went wrong");
-                }
+            {
+                Console.WriteLine("no tiene permiso para hacer esto");
+            }else
+            {
+                Console.WriteLine("Something went wrong");
+            }
 
-     
-        }
-        else
+
+        } else if(((int)response.StatusCode) == 204)
         {
-            if (((int)response.StatusCode) == 401)
+            Console.WriteLine("el usuario no puede actualizarse");
+            NavManager.NavigateTo("/fetchuserDisabled");
+
+        }else if (((int)response.StatusCode) == 401)
             {
 
                 errorMessage = "no puede hacer eso";
@@ -268,7 +271,7 @@
             {
                 errorMessage = "Something went wrong";
             }
-        }
+        
          
     }
     

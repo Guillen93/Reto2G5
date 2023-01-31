@@ -7,7 +7,7 @@ namespace Reto2G5
     {
         public static string Login()
         {
-            return "http://localhost:8082/api/users/login";
+            return "http://localhost:8082/api/users/loginSinCifrado";
         }
         public static string SendMail()
         {
@@ -16,7 +16,7 @@ namespace Reto2G5
 
         public static string GetUsers()
         {
-            return "http://localhost:8082/api/users";
+            return "http://localhost:8082/api/users/professor/student";
         }
         public static string GetUsersByDni(string dni)
         {
@@ -44,7 +44,7 @@ namespace Reto2G5
         }
         public static string CreateUsers()
         {
-            return "http://localhost:8082/api/users/signup";
+            return "http://localhost:8082/api/users/signupSinCifrado";
         }
         public static string CreateProfessor()
         {
@@ -62,9 +62,17 @@ namespace Reto2G5
         {
             return "http://localhost:8082/api/users/" + dni;
         }
+        public static string DeleteStudent(String dni)
+        {
+            return "http://localhost:8082/api/students/" + dni;
+        }
+        public static string DeleteProfessor(String dni)
+        {
+            return "http://localhost:8082/api/professors/" + dni;
+        }
         public static string UpdateUser(String dni)
         {
-            return "http://localhost:8082/api/users/" + dni;
+            return "http://localhost:8082/api/users/admin/"+dni;
         }
        
     }

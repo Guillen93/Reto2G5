@@ -141,27 +141,49 @@ else
     {
         if (accepted)
         {
-            //string dni = _studentModelToDelete.studentDni;
-            ////var response = await Http.DeleteAsync(Endpoints.DeleteUsers(dni));
+            string dni = _studentModelToDelete.studentDni;
+            var response = await Http.DeleteAsync(Endpoints.DeleteStudent(dni));
 
-            //if (response.IsSuccessStatusCode)
-            //{
-            //    Console.WriteLine("ha entrado 200");
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("se ha borrado el estudiante");
+               
 
+                Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
 
-            //}
-            //else
-            //{
+                HttpResponseMessage responseDel = await Http.DeleteAsync(Endpoints.DeleteUsers(dni));
 
-            //    if (((int)response.StatusCode) == 401)
-            //    {
-            //        //errorMessage = "Incorrect user or password";
-            //    }
-            //    else
-            //    {
-            //        //errorMessage = "Something went wrong";
-            //    }
-            //}
+                if (responseDel.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("ha borrado el usuario");
+                }
+                else
+                {
+
+                    if (((int)responseDel.StatusCode) == 409)
+                    {
+                        //errorMessage = "usuario ya existe";
+                    }
+                    else
+                    {
+                        //errorMessage = "Something went wrong";
+                    }
+                }
+            }
+            else
+            {
+
+                if (((int)response.StatusCode) == 401)
+                {
+                    Console.WriteLine("Incorrect user or password");
+                    //errorMessage = "Incorrect user or password";
+                }
+                else
+                {
+                    Console.WriteLine("Something went wrong");
+                    //errorMessage = "Something went wrong";
+                }
+            }
             _studentModelToDelete = null;
 
 
