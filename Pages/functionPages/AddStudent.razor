@@ -119,7 +119,10 @@
             </div>
         <div class="col"> </div>
             <p>@errorMessage</p>
-
+            @if (OpenErrorDialog)
+            {
+                <ModalDialog Title=" ¡Error! " Text="ha habido un error" OnClose="OnErrorDialogClose" DialogType="ModalDialog.ModalDialogType.Ok"></ModalDialog>
+            }
     </div>
 
 </div>
@@ -130,20 +133,22 @@
 @code {
     [Inject]
     private ILocalStorage localStorage { get; set; }
-    UserResponse userLocal = new UserResponse();
+
     string tipo = "password";
-    DateOnly fecha = new DateOnly();
-    int phone = new int();
-    public bool DeleteDialogOpen { get; set; }
+    string errorMessage;
+    public bool OpenErrorDialog { get; set; }
+
+    
+    UserResponse userLocal = new UserResponse();
     UserRequest userRequest = new UserRequest();
     StudentRequest studentRequest = new StudentRequest();
     StudentCreate studentCreate = new StudentCreate();
-    String errorMessage;
+    
 
     protected override async Task OnInitializedAsync()
     {
         userLocal = IsDataNull.CreateInstanceIFIsNull<UserResponse>(await localStorage.GetValue<UserResponse>(ValuesKeys.Objeto));
-
+        studentCreate.bornDate = DateTime.Today;
     }
 
     async Task createUser()
@@ -172,7 +177,7 @@
             }
             else
             {
-                errorMessage = "Something went wrong";
+                DialogOpenError();
             }
         }
 
@@ -208,7 +213,7 @@
             }
             else
             {
-                Console.WriteLine("Something went wrong");
+                DialogOpenError();
             }
 
            
@@ -228,7 +233,7 @@
             }
             else
             {
-                errorMessage = "Something went wrong";
+                DialogOpenError();
             }
         }
 
@@ -244,6 +249,22 @@
         {
             tipo = "password";
         }
+    }
+    
+
+    private async Task OnErrorDialogClose()
+    {
+       
+        
+        
+        OpenErrorDialog = false;
+        StateHasChanged();
+        NavManager.NavigateTo("/student/add", forceLoad: true);
+    }
+    private void DialogOpenError()
+    {
+        OpenErrorDialog = true;
+        StateHasChanged();
     }
 
 }
