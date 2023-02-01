@@ -84,7 +84,7 @@ else
     protected List<UserModel> searchUserData = new();
 
 
-    
+
     private UserModel _userModelToDelete;
     protected string SearchString { get; set; } = string.Empty;
     public bool DeleteDialogOpen { get; set; }
@@ -156,6 +156,17 @@ else
 
             if (response.IsSuccessStatusCode)
             {
+                foreach( RoleModel roleModel in _userModelToDelete.Roles)
+                {
+                    if (roleModel.roleID == 2)
+                    {
+                        HttpResponseMessage responseP = await client.DeleteAsync(Endpoints.DeleteProfessor(dni));
+
+                    }else if(roleModel.roleID == 3)
+                    {                 
+                        HttpResponseMessage responseP = await client.DeleteAsync(Endpoints.DeleteProfessor(dni));
+                    }
+                }
                 Console.WriteLine("ha borrado el usuario");
             }
             else
@@ -163,15 +174,14 @@ else
 
                 if (((int)response.StatusCode) == 409)
                 {
-                    //errorMessage = "usuario ya existe";
+                    Console.WriteLine("usuario no existe");
                 }
                 else
                 {
-                    //errorMessage = "Something went wrong";
+                    Console.WriteLine("Something went wrong");
                 }
             }
             _userModelToDelete = null;
-
 
         }          
 

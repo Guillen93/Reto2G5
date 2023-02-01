@@ -18,94 +18,88 @@
 
 
 <div >
+    <div class="container">
+        <div class="row align-items-start">
+            <div class="col"> </div>
 
+            <div class="col"> </div>
+        </div>
+        <div class="row align-items-center">
+            <div class="col"></div>
+            <div class="col">
+                <h3>Añadir Profesor</h3>
+                    <EditForm Model=professorCreate >
+                        <DataAnnotationsValidator />
 
-<div class="container">
-    <div class="row align-items-start">
-        <div class="col"> </div>
-
-        <div class="col"> </div>
-    </div>
-    <div class="row align-items-center">
-        <div class="col"></div>
-        <div class="col">
-            <h3>Añadir Profesor</h3>
-                <EditForm Model=professorCreate >
-                    <DataAnnotationsValidator />
-
-                    <div>
-                        <p>
-                            <label for="id">User_Dni:</label>
-                            <InputText @bind-Value=professorCreate.dni id="id" class="form-control" size=40 style="width:500px " />
-                            <ValidationMessage For=@(()=>professorCreate.dni) />
-                        </p>
-                    </div>
-
-                    <div>
-                        <p>
-                            <label for="password">PassWord:</label>
-                            <InputText @bind-Value=professorCreate.password id="password" type=@tipo class="form-control" size=40 style="width:500px" />
-                            <ValidationMessage For=@(()=>professorCreate.password) />
-                        </p>
-                        <p>
-                            <button class="btn btn-outline-secondary" type="button" @onclick="mostrarPass">
-                                mostrar
-                            </button>
-                        </p>
-                    </div>
-                    <div>
-                        <p>
-                            <label for="nombre">Nombre:</label>
-                            <InputText @bind-Value=professorCreate.name id="nombre" class="form-control" size=40 style="width:500px " />
-                            <ValidationMessage For=@(()=>professorCreate.name) />
-                        </p>
-                    </div>
-                     <div>
-                        <p>
-                            <label for="apellido">Apellido:</label>
-                            <InputText @bind-Value=professorCreate.surname id="apellido" class="form-control" size=40 style="width:500px " />
-                            <ValidationMessage For=@(()=>professorCreate.surname) />
-                       </p>
-                    </div>
-                    <div>
-                        <p>
-                            <label for="email">Email:</label>
-                            <InputText @bind-Value=professorCreate.email id="email" class="form-control" size=40 style="width:500px " />
-                            <ValidationMessage For=@(()=>professorCreate.email) />
-                        </p>
-                    </div>
-                    <div>
-                        <p>
-                            <label for="nationaility">Nacionalidad:</label>
-                            <InputText @bind-Value=professorCreate.nationality id="nacionalidad" class="form-control" size=40 style="width:500px " />
-                            <ValidationMessage For=@(()=>professorCreate.nationality) />
-                        </p>
-                    </div>
-
-                    <div>
-                        <p>
-                            <label for="adress">Direccion:</label>
-                            <InputText @bind-Value=professorCreate.addres id="adress" class="form-control" size=40 style="width:500px " />
-                            <ValidationMessage For=@(()=>professorCreate.addres) />
-                        </p>
-                    </div>
-
-                    <div class="row align-items-end">
-                        <div class="col"></div>
-                        <div class="col">
-                            <button class="btn btn-danger" style="width:150px" @onclick="createUser">Añadir profesor</button>
+                        <div>
+                            <p>
+                                <label for="id">User_Dni:</label>
+                                <InputText @bind-Value=professorCreate.dni id="id" class="form-control" size=40 style="width:500px " />
+                                <ValidationMessage For=@(()=>professorCreate.dni) />
+                            </p>
                         </div>
-                        <div class="col"></div>
-                    </div>
-                </EditForm>
-            </div>
-        <div class="col"> </div>
-            
 
+                        <div>
+                            <p>
+                                <label for="password">PassWord:</label>
+                                <InputText @bind-Value=professorCreate.password id="password" type=@tipo class="form-control" size=40 style="width:500px" />
+                                <ValidationMessage For=@(()=>professorCreate.password) />
+                            </p>
+                            <p>
+                                <button class="btn btn-outline-secondary" type="button" @onclick="mostrarPass">
+                                    mostrar
+                                </button>
+                            </p>
+                        </div>
+                        <div>
+                            <p>
+                                <label for="nombre">Nombre:</label>
+                                <InputText @bind-Value=professorCreate.name id="nombre" class="form-control" size=40 style="width:500px " />
+                                <ValidationMessage For=@(()=>professorCreate.name) />
+                            </p>
+                        </div>
+                         <div>
+                            <p>
+                                <label for="apellido">Apellido:</label>
+                                <InputText @bind-Value=professorCreate.surname id="apellido" class="form-control" size=40 style="width:500px " />
+                                <ValidationMessage For=@(()=>professorCreate.surname) />
+                           </p>
+                        </div>
+                        <div>
+                            <p>
+                                <label for="email">Email:</label>
+                                <InputText @bind-Value=professorCreate.email id="email" class="form-control" size=40 style="width:500px " />
+                                <ValidationMessage For=@(()=>professorCreate.email) />
+                            </p>
+                        </div>
+                        <div>
+                            <p>
+                                <label for="nationaility">Nacionalidad:</label>
+                                <InputText @bind-Value=professorCreate.nationality id="nacionalidad" class="form-control" size=40 style="width:500px " />
+                                <ValidationMessage For=@(()=>professorCreate.nationality) />
+                            </p>
+                        </div>
+
+                        <div>
+                            <p>
+                                <label for="adress">Direccion:</label>
+                                <InputText @bind-Value=professorCreate.addres id="adress" class="form-control" size=40 style="width:500px " />
+                                <ValidationMessage For=@(()=>professorCreate.addres) />
+                            </p>
+                        </div>
+
+                        <div class="row align-items-end">
+                            <div class="col"></div>
+                            <div class="col">
+                                <button class="btn btn-danger" style="width:150px" @onclick="createUser">Añadir profesor</button>
+                            </div>
+                            <div class="col"></div>
+                        </div>
+                    </EditForm>
+                </div>
+            <div class="col"> </div>
+        </div>
     </div>
-
-</div>
-
 </div>
 
 
@@ -113,8 +107,10 @@
     [Inject]
     private ILocalStorage localStorage { get; set; }
     UserResponse userLocal = new UserResponse();
+
     string tipo = "password";
     public bool DeleteDialogOpen { get; set; }
+
     UserRequest userRequest = new UserRequest();
     ProfessorRequest professorRequest = new ProfessorRequest();
     ProfessorCreate professorCreate = new ProfessorCreate();
@@ -123,7 +119,6 @@
     protected override async Task OnInitializedAsync()
     {
         userLocal = IsDataNull.CreateInstanceIFIsNull<UserResponse>(await localStorage.GetValue<UserResponse>(ValuesKeys.Objeto));
-
     }
 
     async Task createUser()
@@ -160,7 +155,6 @@
                 HttpClient HttpClP = new HttpClient();
                 var responseMP = await HttpClP.PostAsJsonAsync<eMailModel>(sendMail, mail);
 
-
                 if (responseMP.IsSuccessStatusCode)
                 {
                     Console.WriteLine("EMail enviado");
@@ -170,11 +164,6 @@
                 {
                     Console.WriteLine("Something went wrong");
                 }
-
-
-
-
-
             }
             else
             {
@@ -223,9 +212,8 @@
             }
         }
 
-        
-
     }
+
     private void mostrarPass()
     {
 
@@ -239,11 +227,4 @@
         }
     }
 
-    public class Pais
-    {
-        public string countryName { get; set; }
-        public string population { get; set; }
-        public string capital { get; set; }
-        public string continentName { get; set; }
-    }
 }

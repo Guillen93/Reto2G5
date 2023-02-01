@@ -47,7 +47,7 @@ else
     <table class="table table-striped align-middle table-bordered">
         <thead class="table-success">
             <tr>
-
+                <th>photo</th>
                 <th>Student dni</th>
                 <th>name</th>
                 <th>surname</th>
@@ -55,14 +55,14 @@ else
                 <th>nationality</th>
                 <th>email</th>
                 <th>phone</th>
-                <th>photo</th>
+                
             </tr>
         </thead>
         <tbody>
-            @foreach (var student in studentList)
+            @foreach (var student in studentList.Skip((CurrentPage - 1) * PageSize).Take(PageSize))
             {
                 <tr>
-                    
+                    <th><img src="data:image/jpeg;base64,@student.photo" width="100" height="100"></th>
                     <th>@student.studentDni</th>
                     <th>@student.name</th>
                     <th>@student.surname</th>
@@ -70,18 +70,33 @@ else
                     <th>@student.nationality</th>
                     <th>@student.email</th>
                     <th>@student.phone</th>
-                    <th>@student.photo</th>
+                    
                     <td><button type="button" class="btn btn-outline-danger" @onclick="() => OpenDeleteDialog(student)">Delete</button></td>
-                    <td><button type="button" class="btn btn-warning btn-sm" @onclick="() => OpenDeleteDialog(student)">Update</button></td>
+                    <td><button type="button" class="btn btn-warning btn-sm" @onclick="() =>GoUpdate(student)">Update</button></td>
                 </tr>
             }
         </tbody>
 
     </table>
+
+@*    <Paginacion CurrentPage="@CurrentPage" PageSize="@PageSize" TotalPages="@TotalPages" ></Paginacion>*@
+
+    <nav>
+        <ul class="pagination">
+            <li class="page-item @(CurrentPage == 1 ? "disabled" : "")">
+                <a class="page-link" href="/fetchstudentdetails" @onclick="(e) => PreviousPage()">Previous</a>
+            </li>
+            <li class="page-item @(CurrentPage == TotalPages ? "disabled" : "")">
+                <a class="page-link" href="/fetchstudentdetails" @onclick="(e) => NextPage()">Next</a>
+            </li>
+        </ul>
+    </nav>
+
     @if (DeleteDialogOpen)
     {
         <ModalDialog Title="¿Estas Seguro?" Text="¿Quieres borrar el usuario?" OnClose="OnDeleteDialogClose"></ModalDialog>
     }
+
 }
 @code {
     [Inject]
@@ -90,9 +105,14 @@ else
     protected List<StudentModel>? studentList = new();
     protected List<StudentModel>? searchUserData = new();
 
-    //protected UserModel user = new();
+    public bool DeleteDialogOpen { get; set; }
     private StudentModel? _studentModelToDelete;
     protected string SearchString { get; set; } = string.Empty;
+
+    private int PageSize = 3;
+    private int CurrentPage { get; set; } = 1;
+    private int TotalPages => (int)Math.Ceiling(studentList.Count / (double)PageSize);
+
     protected override async Task OnInitializedAsync()
     {
         userLocal = IsDataNull.CreateInstanceIFIsNull<UserResponse>(await localStorage.GetValue<UserResponse>(ValuesKeys.Objeto));
@@ -115,7 +135,6 @@ else
     {
         if (!string.IsNullOrEmpty(SearchString))
         {
-
             studentList = searchUserData
                 .Where(x => x.name.IndexOf(SearchString, StringComparison.OrdinalIgnoreCase) != -1)
                 .ToList();
@@ -132,9 +151,6 @@ else
         studentList = searchUserData;
     }
 
-
-    public bool DeleteDialogOpen { get; set; }
-
     private async Task OnDeleteDialogClose(bool accepted)
     {
         if (accepted)
@@ -145,7 +161,7 @@ else
             if (response.IsSuccessStatusCode)
             {
                 Console.WriteLine("se ha borrado el estudiante");
-               
+
 
                 Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
 
@@ -160,11 +176,11 @@ else
 
                     if (((int)responseDel.StatusCode) == 409)
                     {
-                        //errorMessage = "usuario ya existe";
+                        Console.WriteLine("usuario ya existe");
                     }
                     else
                     {
-                        //errorMessage = "Something went wrong";
+                        Console.WriteLine("Something went wrong");
                     }
                 }
             }
@@ -174,12 +190,11 @@ else
                 if (((int)response.StatusCode) == 401)
                 {
                     Console.WriteLine("Incorrect user or password");
-                    //errorMessage = "Incorrect user or password";
                 }
                 else
                 {
                     Console.WriteLine("Something went wrong");
-                    //errorMessage = "Something went wrong";
+
                 }
             }
             _studentModelToDelete = null;
@@ -191,6 +206,7 @@ else
         StateHasChanged();
         NavManager.NavigateTo("/fetchstudentdetails", forceLoad: true);
     }
+
     private void OpenDeleteDialog(StudentModel studentModel)
     {
         DeleteDialogOpen = true;
@@ -198,9 +214,28 @@ else
         StateHasChanged();
     }
 
+    public void PreviousPage()
+    {
+        if (CurrentPage > 1)
+        {
+            CurrentPage--;
+        }
+    }
+
+    public void NextPage()
+    {
+        if (CurrentPage < TotalPages)
+        {
+            CurrentPage++;
+        }
+    }
 
 
+    private void GoUpdate(StudentModel studentModel)
+    {
+        string dni = studentModel.studentDni;
 
-    
+        NavManager.NavigateTo("/student/update?dni=" + dni);
+    }
 
 }

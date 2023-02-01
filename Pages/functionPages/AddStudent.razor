@@ -18,114 +18,94 @@
 
 
 <div >
+    <div class="container">
+        <div class="row align-items-start">
+            <div class="col"> </div>
 
-
-<div class="container">
-    <div class="row align-items-start">
-        <div class="col"> </div>
-
-        <div class="col"> </div>
-    </div>
-    <div class="row align-items-center">
-        <div class="col"></div>
-        <div class="col">
-            <h3>Añadir Estudiante</h3>
-                <EditForm Model=studentCreate>
-                    <DataAnnotationsValidator />
-
-                    <div>
-                        <p>
-                            <label for="id">User_Dni:</label>
-                            <InputText @bind-Value=studentCreate.studentDni id="id" class="form-control" size=40 style="width:500px " />
-                            <ValidationMessage For=@(()=>studentCreate.studentDni) />
-                        </p>
-                    </div>
-
-                    <div>
-                        <p>
-                            <label for="password">PassWord:</label>
-                            <InputText @bind-Value=studentCreate.password id="password" type=@tipo class="form-control" size=40 style="width:500px" />
-                            <ValidationMessage For=@(()=>studentCreate.password) />
-                        </p>
-                        <p>
-                            <button class="btn btn-outline-secondary" type="button" @onclick="mostrarPass">
-                                mostrar
-                            </button>
-                        </p>
-                    </div>
-                    <div>
-                        <p>
-                            <label for="nombre">Nombre:</label>
-                            <InputText @bind-Value=studentCreate.name id="nombre" class="form-control" size=40 style="width:500px " />
-                            <ValidationMessage For=@(()=>studentCreate.name) />
-                        </p>
-                    </div>
-                     <div>
-                        <p>
-                            <label for="apellido">Apellido:</label>
-                            <InputText @bind-Value=studentCreate.surname id="apellido" class="form-control" size=40 style="width:500px " />
-                            <ValidationMessage For=@(()=>studentCreate.surname) />
-                       </p>
-                    </div>
-                    <div>
-                        <p>
-                            <label for="email">Email:</label>
-                            <InputText @bind-Value=studentCreate.email id="email" class="form-control" size=40 style="width:500px " />
-                            <ValidationMessage For=@(()=>studentCreate.email) />
-                        </p>
-                    </div>
-                    <div>
-                        <p>
-                            <label for="nationaility">Nacionalidad:</label>
-                            <InputText @bind-Value=studentCreate.nationality id="nacionalidad" class="form-control" size=40 style="width:500px " />
-                            <ValidationMessage For=@(()=>studentCreate.nationality) />
-                        </p>
-                    </div>
-                    <div>
-                        <p>
-                            <label for="telefono">telefono:</label>
-                            <InputText @bind-Value=studentCreate.phone id="telefono" class="form-control" size=40 style="width:500px " />
-                            
-                        </p>
-                    </div>
-                    @*<div>
-                        <p>
-                            <label for="telefono">Telefono:</label>
-                            <Input type="number" value="@phone" id="telefono" class="form-control" size=40 style="width:500px " />
-                        </p>
-                    </div>*@
-                    <div>
-                        <p>
-                            <label for="fecha">Fecha de nacimiento:</label>
-                            <input type="date" name="fecha" @bind-value=studentCreate.bornDate >
-                        </p>
-                    </div>
-                    @*<div>
-                        <p>
-                            <label for="fechNac">Fecha de nacimiento:</label>
-                            <InputDate  @bind-Value=studentCreate.bornDate  class="form-check"/>
-                            
-                        </p>
-                    </div>*@
-
-                    <div class="row align-items-end">
-                        <div class="col"></div>
-                        <div class="col">
-                            <button class="btn btn-danger" style="width:150px" @onclick="createUser">Añadir estudiante:</button>
+            <div class="col"> </div>
+        </div>
+        <div class="row align-items-center">
+            <div class="col"></div>
+            <div class="col">
+                <h3>Añadir Estudiante</h3>
+                    <EditForm Model=studentCreate>
+                        <DataAnnotationsValidator />
+                        <div>
+                            <p>
+                                <label for="id">User_Dni:</label>
+                                <InputText @bind-Value=studentCreate.studentDni id="id" class="form-control" size=40 style="width:500px " />
+                                <ValidationMessage For=@(()=>studentCreate.studentDni) />
+                            </p>
                         </div>
-                        <div class="col"></div>
-                    </div>
-                </EditForm>
-            </div>
-        <div class="col"> </div>
-            <p>@errorMessage</p>
-            @if (OpenErrorDialog)
-            {
-                <ModalDialog Title=" ¡Error! " Text="ha habido un error" OnClose="OnErrorDialogClose" DialogType="ModalDialog.ModalDialogType.Ok"></ModalDialog>
-            }
-    </div>
 
-</div>
+                        <div>
+                            <p>
+                                <label for="password">PassWord:</label>
+                                <InputText @bind-Value=studentCreate.password id="password" type=@tipo class="form-control" size=40 style="width:500px" />
+                                <ValidationMessage For=@(()=>studentCreate.password) />
+                            </p>
+                            <p>
+                                <button class="btn btn-outline-secondary" type="button" @onclick="mostrarPass">
+                                    mostrar
+                                </button>
+                            </p>
+                        </div>
+                        <div>
+                            <p>
+                                <label for="nombre">Nombre:</label>
+                                <InputText @bind-Value=studentCreate.name id="nombre" class="form-control" size=40 style="width:500px " />
+                                <ValidationMessage For=@(()=>studentCreate.name) />
+                            </p>
+                        </div>
+                         <div>
+                            <p>
+                                <label for="apellido">Apellido:</label>
+                                <InputText @bind-Value=studentCreate.surname id="apellido" class="form-control" size=40 style="width:500px " />
+                                <ValidationMessage For=@(()=>studentCreate.surname) />
+                           </p>
+                        </div>
+                        <div>
+                            <p>
+                                <label for="email">Email:</label>
+                                <InputText @bind-Value=studentCreate.email id="email" class="form-control" size=40 style="width:500px " />
+                                <ValidationMessage For=@(()=>studentCreate.email) />
+                            </p>
+                        </div>
+                        <div>
+                            <p>
+                                <label for="nationaility">Nacionalidad:</label>
+                                <InputText @bind-Value=studentCreate.nationality id="nacionalidad" class="form-control" size=40 style="width:500px " />
+                                <ValidationMessage For=@(()=>studentCreate.nationality) />
+                            </p>
+                        </div>
+                        <div>
+                            <p>
+                                <label for="telefono">telefono:</label>
+                                <InputText @bind-Value=studentCreate.phone id="telefono" class="form-control" size=40 style="width:500px " />
+                            </p>
+                        </div>
+                        <div>
+                            <p>
+                                <label for="fecha">Fecha de nacimiento:</label>
+                                <input type="date" name="fecha" @bind-value=studentCreate.bornDate >
+                            </p>
+                        </div>
+                        <div class="row align-items-end">
+                            <div class="col"></div>
+                            <div class="col">
+                                <button class="btn btn-danger" style="width:150px" @onclick="createUser">Añadir estudiante:</button>
+                            </div>
+                            <div class="col"></div>
+                        </div>
+                    </EditForm>
+                </div>
+            <div class="col"> </div>
+                @if (OpenErrorDialog)
+                {
+                    <ModalDialog Title=" ¡Error! " Text="ha habido un error" OnClose="OnErrorDialogClose" DialogType="ModalDialog.ModalDialogType.Ok"></ModalDialog>
+                }
+        </div>
+    </div>
 
 </div>
 
@@ -135,7 +115,6 @@
     private ILocalStorage localStorage { get; set; }
 
     string tipo = "password";
-    string errorMessage;
     public bool OpenErrorDialog { get; set; }
 
     
@@ -164,83 +143,74 @@
         {
             Console.WriteLine("usuario Creado");
 
+            studentRequest.studentDni = studentCreate.studentDni;
+            studentRequest.name = studentCreate.name;
+            studentRequest.surname = studentCreate.surname;
+            studentRequest.email = studentCreate.email;
+            studentRequest.nationality = studentCreate.nationality;
+            studentRequest.bornDate = studentCreate.bornDate.ToString("yyyy-MM-dd");
+            studentRequest.photo = "foto";
+            studentRequest.phone = studentCreate.phone;
+            HttpResponseMessage responseP = await Http.PostAsJsonAsync<StudentRequest>(Endpoints.CreateStudent(), studentRequest);
+
+            if (responseP.IsSuccessStatusCode)
+            {
+                Console.WriteLine("student Creado");
+                eMailModel mail = new eMailModel();
+                mail.recipient = studentCreate.email;
+                mail.subject = "Creacion de Usuario";
+                mail.msgBody = " Bienvenidal al sistema " + studentCreate.name + "\n Su cuenta ha sido creada con exito.\n en breve recibira confirmacion de la activacion de su cuenta.";
+
+                string sendMail = "http://localhost:8082/api/sendMail";
+                HttpClient HttpClP = new HttpClient();
+                var responseMP = await HttpClP.PostAsJsonAsync<eMailModel>(sendMail, mail);
+
+
+                if (responseMP.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("EMail enviado");
+                    NavManager.NavigateTo("/fetchstudentdetails");
+                }
+                else
+                {
+                    DialogOpenError();
+                }
+            }
+            else
+            {
+                if (((int)responseP.StatusCode) == 401)
+                {
+                    Console.WriteLine("no puede hacer eso");
+                }
+                if (((int)responseP.StatusCode) == 409)
+                {
+                    Console.WriteLine("usuario ya registrado");
+                }
+                else
+                {
+                    DialogOpenError();
+                }
+            }
         }
         else
         {
             if (((int)response.StatusCode) == 401)
             {
-                errorMessage = "no puede hacer eso";
+                Console.WriteLine("no puede hacer eso");
             }
             if (((int)response.StatusCode) == 409)
             {
-                errorMessage = "usuario ya registrado";
+                Console.WriteLine("usuario ya registrado");
             }
             else
             {
                 DialogOpenError();
             }
         }
-
-        studentRequest.studentDni = studentCreate.studentDni;
-        studentRequest.name = studentCreate.name;
-        studentRequest.surname = studentCreate.surname;
-        studentRequest.email = studentCreate.email;
-        studentRequest.nationality = studentCreate.nationality;
-        studentRequest.bornDate = studentCreate.bornDate.ToString("yyyy-MM-dd");
-        Console.WriteLine(studentCreate.bornDate.ToString("yyyy-MM-dd"));
-        Console.WriteLine(studentRequest.bornDate);
-        studentRequest.photo = "foto";
-        studentRequest.phone = studentCreate.phone;
-        HttpResponseMessage responseP = await Http.PostAsJsonAsync<StudentRequest>(Endpoints.CreateStudent(), studentRequest);
-
-        if (responseP.IsSuccessStatusCode)
-        {
-
-            eMailModel mail = new eMailModel();
-            mail.recipient = studentCreate.email;
-            mail.subject = "Creacion de Usuario";
-            mail.msgBody = " Bienvenidal al sistema " + studentCreate.name + "\n Su cuenta ha sido creada con exito.\n en breve recibira confirmacion de la activacion de su cuenta.";
-
-            string sendMail = "http://localhost:8082/api/sendMail";
-            HttpClient HttpClP = new HttpClient();
-            var responseMP = await HttpClP.PostAsJsonAsync<eMailModel>(sendMail, mail);
-
-
-            if (responseMP.IsSuccessStatusCode)
-            {
-                Console.WriteLine("EMail enviado");
-                NavManager.NavigateTo("/fetchstudentdetails");
-            }
-            else
-            {
-                DialogOpenError();
-            }
-
-           
-
-
-
-        }
-        else
-        {
-            if (((int)responseP.StatusCode) == 401)
-            {
-                errorMessage = "no puede hacer eso";
-            }
-            if (((int)responseP.StatusCode) == 409)
-            {
-                errorMessage = "usuario ya registrado";
-            }
-            else
-            {
-                DialogOpenError();
-            }
-        }
-
     }
+
     private void mostrarPass()
     {
-
         if (tipo == "password")
         {
             tipo = "text";
@@ -251,16 +221,13 @@
         }
     }
     
-
     private async Task OnErrorDialogClose()
     {
-       
-        
-        
         OpenErrorDialog = false;
         StateHasChanged();
         NavManager.NavigateTo("/student/add", forceLoad: true);
     }
+
     private void DialogOpenError()
     {
         OpenErrorDialog = true;

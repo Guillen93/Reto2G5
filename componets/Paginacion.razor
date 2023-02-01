@@ -1,0 +1,25 @@
+﻿@*@using Reto2G5.Pages
+
+<nav>
+    <ul class="pagination">
+        <li class="page-item @(CurrentPage == 1 ? "disabled" : "")">
+            <a class="page-link" href="/fetchstudentdetails" @onclick="(e) => PreviousPage()">Previous</a>
+        </li>
+        <li class="page-item @(CurrentPage == TotalPages ? "disabled" : "")">
+            <a class="page-link" href="/fetchstudentdetails" @onclick="(e) => StudentDetails.NextPage()">Next</a>
+        </li>
+    </ul>
+</nav>
+
+@code {
+    [Parameter]
+    public int PageSize { get; set; }
+    [Parameter]
+    public int CurrentPage { get; set; } 
+    [Parameter]
+    public int TotalPages { get; set; }
+
+    
+ *@
+
+}

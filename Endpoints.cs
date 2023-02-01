@@ -74,6 +74,14 @@ namespace Reto2G5
         {
             return "http://localhost:8082/api/users/admin/"+dni;
         }
-       
+        public static string UpdateStudent(String dni)
+        {
+            return "http://localhost:8082/api/students/" + dni;
+        }
+        public static string UpdateProfessor(String dni)
+        {
+            return "http://localhost:8082/api/professors/" + dni;
+        }
+
     }
 }
