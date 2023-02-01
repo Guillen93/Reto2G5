@@ -4,12 +4,13 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Reto2G5;
 using Reto2G5.Interfaces;
 using Reto2G5.LocalStorage;
+using Syncfusion.Blazor;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-
+builder.Services.AddSyncfusionBlazor();
 
 
 builder.Services.AddTransient<ILocalStorage, LocalStorage>();

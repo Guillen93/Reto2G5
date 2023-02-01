@@ -12,6 +12,6 @@
         public string phone { get; set; }
         public object photo { get; set; }
 
-
+        
     }
 }

@@ -1,4 +1,4 @@
-﻿@page "/fetchstudentdetails"
+﻿@page "/PageSize"
 
 @using Reto2G5.Enum;
 @using Reto2G5.Helpers;
@@ -59,10 +59,11 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var student in studentList)
+
+            @foreach (var student in studentList.Skip((CurrentPage - 1) * PageSize).Take(PageSize))
             {
                 <tr>
-                    
+
                     <th>@student.studentDni</th>
                     <th>@student.name</th>
                     <th>@student.surname</th>
@@ -78,6 +79,17 @@ else
         </tbody>
 
     </table>
+    <nav>
+        <ul class="pagination">
+            <li class="page-item @(CurrentPage == 1 ? "disabled" : "")">
+                <a class="page-link" href="/PageSize" @onclick="(e) => PreviousPage()">Previous</a>
+            </li>
+            <li class="page-item @(CurrentPage == TotalPages ? "disabled" : "")">
+                <a class="page-link" href="/PageSize" @onclick="(e) => NextPage()">Next</a>
+            </li>
+        </ul>
+    </nav>
+
     @if (DeleteDialogOpen)
     {
         <ModalDialog Title="¿Estas Seguro?" Text="¿Quieres borrar el usuario?" OnClose="OnDeleteDialogClose"></ModalDialog>
@@ -90,6 +102,10 @@ else
     protected List<StudentModel>? studentList = new();
     protected List<StudentModel>? searchUserData = new();
 
+    private int PageSize = 5;
+    private int CurrentPage { get; set; } = 1;
+    private int TotalPages => (int)Math.Ceiling(studentList.Count / (double)PageSize);
+
     //protected UserModel user = new();
     private StudentModel? _studentModelToDelete;
     protected string SearchString { get; set; } = string.Empty;
@@ -100,7 +116,23 @@ else
 
     }
 
+    private void PreviousPage()
+    {
+        if (CurrentPage > 1)
+        {
+            CurrentPage--;
+        }
+    }
 
+    private void NextPage()
+    {
+        if (CurrentPage < TotalPages)
+        {
+            CurrentPage++;
+        }
+    }
+
+    
     protected async Task GetStudent()
     {
         Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
@@ -145,7 +177,7 @@ else
             if (response.IsSuccessStatusCode)
             {
                 Console.WriteLine("se ha borrado el estudiante");
-               
+
 
                 Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
 
@@ -201,6 +233,6 @@ else
 
 
 
-    
+
 
 }
