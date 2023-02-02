@@ -48,12 +48,11 @@ else
     <table class="table table-striped align-middle table-bordered">
         <thead class="table-success">
             <tr>
-
+                <th>photo</th>
                 <th>ProfessorDni</th>
                 <th>name</th>
                 <th>surname</th>
                 <th>email</th>
-                <th>photo</th>
                 <th>nationality</th>                
                 <th>addres</th>
                 
@@ -63,12 +62,11 @@ else
             @foreach (var professor in professorList)
             {
                 <tr>
-
+                    <th><img src="data:image/jpeg;base64,@professor.photo" width="100" height="100"></th>
                     <th>@professor.professorDni</th>
                     <th>@professor.name</th>
                     <th>@professor.surname</th>
                     <th>@professor.email</th>
-                    <th>@professor.photo</th>
                     <th>@professor.nationality</th>
                     <th>@professor.addres</th>
                     

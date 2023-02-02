@@ -89,7 +89,7 @@
             <div class="col"> </div>
             @if (OpenErrorDialog)
             {
-                <ModalDialog Title=" ¡Error! " Text="ha habido un error" OnClose="OnErrorDialogClose" DialogType="ModalDialog.ModalDialogType.Ok"></ModalDialog>
+                    <ModalDialog Title=" ¡Error! " Text="ha habido un error" OnClose="OnErrorDialogClose" DialogType="ModalDialog.ModalDialogType.Ok"></ModalDialog>
             }
         </div>
     </div>
@@ -107,7 +107,7 @@
     private string dniUrl;
 
 
-    private DateTime fecha ;
+    private DateTime fecha;
     private string fechaNac;
     public bool OpenErrorDialog { get; set; }
     StudentRequest studentUpdate;
@@ -132,7 +132,7 @@
         {
             var apiString = await response.Content.ReadAsStringAsync();
             studentUpdate = JsonSerializer.Deserialize<StudentRequest>(apiString);
-            fechaNac =studentUpdate.bornDate;
+            fechaNac = studentUpdate.bornDate;
             Console.WriteLine(fechaNac);
             fecha = DateTime.Parse(fechaNac);
             Console.WriteLine(fecha.ToString("yyyy-MM-dd"));
@@ -153,44 +153,46 @@
         if (response.IsSuccessStatusCode)
         {
 
-                    eMailModel mail = new eMailModel();
-                    mail.recipient = studentUpdate.email;
-                    mail.subject = "modificacion de Estudiantes";
-                    mail.msgBody = "Datos Actualizados " + studentUpdate.name + "\n Sus datos se han modificado correctamente.";
+            eMailModel mail = new eMailModel();
+            mail.recipient = studentUpdate.email;
+            mail.subject = "modificacion de Estudiantes";
+            mail.msgBody = "Datos Actualizados " + studentUpdate.name + "\n Sus datos se han modificado correctamente.";
 
-                    string sendMail = "http://localhost:8082/api/sendMail";
-                    HttpClient HttpClP = new HttpClient();
-                    var responseMP = await HttpClP.PostAsJsonAsync<eMailModel>(sendMail, mail);
-
-
-                    if (responseMP.IsSuccessStatusCode)
-                    {
-                        Console.WriteLine("Email enviado");
-                        NavManager.NavigateTo("/fetchstudentdetails");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Something went wrong");
-                    }
+            string sendMail = "http://localhost:8082/api/sendMail";
+            HttpClient HttpClP = new HttpClient();
+            var responseMP = await HttpClP.PostAsJsonAsync<eMailModel>(sendMail, mail);
 
 
-        } else if(((int)response.StatusCode) == 204)
-        {
-            Console.WriteLine("el usuario no puede actualizarse");
-            NavManager.NavigateTo("/student/update");
-
-        }else if (((int)response.StatusCode) == 401)
+            if (responseMP.IsSuccessStatusCode)
             {
-
-                 Console.WriteLine("no puede hacer eso");
+                Console.WriteLine("Email enviado");
+                NavManager.NavigateTo("/fetchstudentdetails");
             }
             else
             {
                 Console.WriteLine("Something went wrong");
             }
-         
+
+
+        }
+        else if (((int)response.StatusCode) == 204)
+        {
+            Console.WriteLine("el usuario no puede actualizarse");
+            NavManager.NavigateTo("/student/update");
+
+        }
+        else if (((int)response.StatusCode) == 401)
+        {
+
+            Console.WriteLine("no puede hacer eso");
+        }
+        else
+        {
+            Console.WriteLine("Something went wrong");
+        }
+
     }
-    
+
     private async Task OnErrorDialogClose()
     {
         OpenErrorDialog = false;
