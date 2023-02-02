@@ -72,7 +72,7 @@ else
                     
                     
                     <td><button type="button" class="btn btn-outline-danger btn-sm" @onclick="() => OpenDeleteDialog(professor)">Delete</button></td>
-                    <td><button type="button" class="btn btn-warning btn-sm" @onclick="() => OpenDeleteDialog(professor)">Update</button></td>
+                    <td><button type="button" class="btn btn-warning btn-sm" @onclick="() => GoUpdate(professor)">Update</button></td>
                 </tr>
             }
         </tbody>
@@ -197,11 +197,11 @@ else
     }
 
 
-    //private void GoUpdate(UserModel userModel)
-    //{
-    //    string dni = userModel.dni;
+    private void GoUpdate(ProfessorModel professorModel)
+    {
+        string dni = professorModel.professorDni;
 
-    //    NavManager.NavigateTo("/user/update?dni=" + dni);
-    //}
+        NavManager.NavigateTo("/professor/update?dni=" + dni);
+    }
 
 }

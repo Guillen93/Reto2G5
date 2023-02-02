@@ -1,4 +1,4 @@
-﻿@page "/student/update"
+﻿@page "/professor/update"
 
 
 @using System.ComponentModel.DataAnnotations
@@ -30,57 +30,57 @@
             <div class="col"></div>
             <div class="col">
                 <h3>Modificar Estudiante</h3>
-                <EditForm Model=studentUpdate>
+                <EditForm Model=professorUpdate>
 
                     <div>
-                        <img src="data:image/jpeg;base64,@studentUpdate.photo" width="200" height="200">
+                        <img src="data:image/jpeg;base64,@professorUpdate.photo" width="200" height="200">
                     </div>
                     <div>
                         <p>
                             <label for="id">Student_Dni:</label>
-                            <InputText @bind-Value=studentUpdate.studentDni id="id" disabled class="form-control" size=40 style="width:500px " />
+                            <InputText @bind-Value=professorUpdate.professorDni id="id" disabled class="form-control" size=40 style="width:500px " />
 
                         </p>
                     </div>
                     <div>
                         <p>
                             <label for="nombre">Nombre:</label>
-                            <InputText @bind-Value=studentUpdate.name id="nombre" disabled class="form-control" size=40 style="width:500px " />
+                            <InputText @bind-Value=professorUpdate.name id="nombre" disabled class="form-control" size=40 style="width:500px " />
 
                         </p>
                     </div>
                     <div>
                         <p>
                             <label for="apellido">Apellido:</label>
-                            <InputText @bind-Value=studentUpdate.surname id="apellido" disabled class="form-control" size=40 style="width:500px " />
-                            <ValidationMessage For=@(()=>studentUpdate.surname) />
+                            <InputText @bind-Value=professorUpdate.surname id="apellido" disabled class="form-control" size=40 style="width:500px " />
+                            <ValidationMessage For=@(()=>professorUpdate.surname) />
                         </p>
                     </div>
                     <div>
                         <p>
                             <label for="email">Email:</label>
-                            <InputText @bind-Value=studentUpdate.email id="email"  class="form-control" size=40 style="width:500px " />
-                            <ValidationMessage For=@(()=>studentUpdate.email) />
+                            <InputText @bind-Value=professorUpdate.email id="email" class="form-control" size=40 style="width:500px " />
+                            <ValidationMessage For=@(()=>professorUpdate.email) />
                         </p>
                     </div>
                     <div>
                         <p>
                             <label for="nationaility">Nacionalidad:</label>
-                            <InputText @bind-Value=studentUpdate.nationality id="nacionalidad" disabled class="form-control" size=40 style="width:500px " />
-                            <ValidationMessage For=@(()=>studentUpdate.nationality) />
+                            <InputText @bind-Value=professorUpdate.nationality id="nacionalidad" disabled class="form-control" size=40 style="width:500px " />
+                            <ValidationMessage For=@(()=>professorUpdate.nationality) />
                         </p>
                     </div>
                     <div>
                         <p>
-                            <label for="telefono">telefono:</label>
-                            <InputText @bind-Value=studentUpdate.phone id="telefono" class="form-control" size=40 style="width:500px " />
+                            <label for="adress">Dirección:</label>
+                            <InputText @bind-Value=professorUpdate.addres id="adress" class="form-control" size=40 style="width:500px " />
                         </p>
                     </div>
 
                     <div class="row align-items-end">
                         <div class="col"></div>
                         <div class="col">
-                            <button class="btn btn-danger" style="width:150px" @onclick="UpdatedStudent">Update estudiante:</button>
+                            <button class="btn btn-danger" style="width:150px" @onclick="UpdatedProfessor">Update Profesor:</button>
                         </div>
                         <div class="col"></div>
                     </div>
@@ -89,7 +89,7 @@
             <div class="col"> </div>
             @if (OpenErrorDialog)
             {
-                    <ModalDialog Title=" ¡Error! " Text="ha habido un error" OnClose="OnErrorDialogClose" DialogType="ModalDialog.ModalDialogType.Ok"></ModalDialog>
+                <ModalDialog Title=" ¡Error! " Text="ha habido un error" OnClose="OnErrorDialogClose" DialogType="ModalDialog.ModalDialogType.Ok"></ModalDialog>
             }
         </div>
     </div>
@@ -107,10 +107,9 @@
     private string dniUrl;
 
 
-    private DateTime fecha;
-    private string fechaNac;
+
     public bool OpenErrorDialog { get; set; }
-    StudentRequest studentUpdate;
+    ProfessorRequest professorUpdate;
 
 
     protected override async Task OnInitializedAsync()
@@ -118,35 +117,31 @@
         userLocal = IsDataNull.CreateInstanceIFIsNull<UserResponse>(await localStorage.GetValue<UserResponse>(ValuesKeys.Objeto));
         Uri url = new Uri(MyNavigationManager.Uri);
         dniUrl = HttpUtility.ParseQueryString(url.Query).Get("dni");
-        await GetStudentDni(dniUrl);
+        await GetProfessorDni(dniUrl);
 
     }
 
-    protected async Task GetStudentDni(string dniUrl)
+    protected async Task GetProfessorDni(string dniUrl)
     {
         HttpClient client = new HttpClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
 
-        HttpResponseMessage response = await client.GetAsync(Endpoints.GetStudentsByDni(dniUrl));
+        HttpResponseMessage response = await client.GetAsync(Endpoints.GetProfessorsByDni(dniUrl));
         if (response.IsSuccessStatusCode)
         {
             var apiString = await response.Content.ReadAsStringAsync();
-            studentUpdate = JsonSerializer.Deserialize<StudentRequest>(apiString);
-            fechaNac = studentUpdate.bornDate;
-            Console.WriteLine(fechaNac);
-            fecha = DateTime.Parse(fechaNac);
-            Console.WriteLine(fecha.ToString("yyyy-MM-dd"));
+            professorUpdate = JsonSerializer.Deserialize<ProfessorRequest>(apiString);
         }
+
     }
 
-    async Task UpdatedStudent()
+    async Task UpdatedProfessor()
     {
 
         HttpClient client = new HttpClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
-        fechaNac = fecha.ToString("yyyy-MM-dd");
-        studentUpdate.bornDate = fechaNac;
-        HttpResponseMessage response = await client.PutAsJsonAsync<StudentRequest>(Endpoints.UpdateStudent(studentUpdate.studentDni), studentUpdate);
+
+            HttpResponseMessage response = await client.PutAsJsonAsync<ProfessorRequest>(Endpoints.UpdateProfessor(professorUpdate.professorDni), professorUpdate);
 
 
 
@@ -154,9 +149,9 @@
         {
 
             eMailModel mail = new eMailModel();
-            mail.recipient = studentUpdate.email;
-            mail.subject = "modificacion de Estudiantes";
-            mail.msgBody = "Datos Actualizados " + studentUpdate.name + "\n Sus datos se han modificado correctamente.";
+                mail.recipient = professorUpdate.email;
+            mail.subject = "modificacion de Profesores";
+                mail.msgBody = "Datos Actualizados " + professorUpdate.name + "\n Sus datos se han modificado correctamente.";
 
             string sendMail = "http://localhost:8082/api/sendMail";
             HttpClient HttpClP = new HttpClient();
@@ -197,7 +192,7 @@
     {
         OpenErrorDialog = false;
         StateHasChanged();
-        NavManager.NavigateTo("/student/update", forceLoad: true);
+        NavManager.NavigateTo("/professor/update", forceLoad: true);
     }
 
     private void DialogOpenError()
