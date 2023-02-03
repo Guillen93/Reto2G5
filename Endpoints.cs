@@ -64,11 +64,11 @@ namespace Reto2G5
         }
         public static string DeleteStudent(String dni)
         {
-            return "http://localhost:8082/api/students/" + dni;
+            return "http://localhost:8082/api/studentsDelete/" + dni;
         }
         public static string DeleteProfessor(String dni)
         {
-            return "http://localhost:8082/api/professors/" + dni;
+            return "http://localhost:8082/api/professorsDelete/" + dni;
         }
         public static string UpdateUser(String dni)
         {
@@ -76,11 +76,11 @@ namespace Reto2G5
         }
         public static string UpdateStudent(String dni)
         {
-            return "http://localhost:8082/api/students/" + dni;
+            return "http://localhost:8082/api/studentsUpdate/" + dni;
         }
         public static string UpdateProfessor(String dni)
         {
-            return "http://localhost:8082/api/professors/" + dni;
+            return "http://localhost:8082/api/professorsUpdate/" + dni;
         }
 
     }

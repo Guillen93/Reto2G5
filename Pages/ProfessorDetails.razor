@@ -81,10 +81,10 @@ else
     <nav>
         <ul class="pagination">
             <li class="page-item @(CurrentPage == 1 ? "disabled" : "")">
-                <a class="page-link" href="/fetchstudentdetails" @onclick="(e) => PreviousPage()">Previous</a>
+                <a class="page-link" href="/fetchProfessordetails" @onclick="(e) => PreviousPage()">Previous</a>
             </li>
             <li class="page-item @(CurrentPage == TotalPages ? "disabled" : "")">
-                <a class="page-link" href="/fetchstudentdetails" @onclick="(e) => NextPage()">Next</a>
+                <a class="page-link" href="/fetchProfessordetails" @onclick="(e) => NextPage()">Next</a>
             </li>
         </ul>
     </nav>

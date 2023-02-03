@@ -161,7 +161,7 @@
             if (responseMP.IsSuccessStatusCode)
             {
                 Console.WriteLine("Email enviado");
-                NavManager.NavigateTo("/fetchstudentdetails");
+                NavManager.NavigateTo("/fetchProfessordetails");
             }
             else
             {
@@ -173,7 +173,7 @@
         else if (((int)response.StatusCode) == 204)
         {
             Console.WriteLine("el usuario no puede actualizarse");
-            NavManager.NavigateTo("/student/update");
+            NavManager.NavigateTo("/professor/update");
 
         }
         else if (((int)response.StatusCode) == 401)
