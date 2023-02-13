@@ -63,7 +63,7 @@
                 </EditForm>
             </div>
         <div class="col"> </div>
-            <p>@errorMessage</p>
+         
            
     </div>
     
@@ -265,11 +265,11 @@
         }else if (((int)response.StatusCode) == 401)
             {
 
-                errorMessage = "no puede hacer eso";
+                Console.WriteLine( "no puede hacer eso");
             }
             else
             {
-                errorMessage = "Something went wrong";
+               Console.WriteLine("Something went wrong");
             }
         
          

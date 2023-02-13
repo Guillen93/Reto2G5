@@ -164,7 +164,7 @@ else
 
                     }else if(roleModel.roleID == 3)
                     {                 
-                        HttpResponseMessage responseP = await client.DeleteAsync(Endpoints.DeleteProfessor(dni));
+                        HttpResponseMessage responseP = await client.DeleteAsync(Endpoints.DeleteStudent(dni));
                     }
                 }
                 Console.WriteLine("ha borrado el usuario");

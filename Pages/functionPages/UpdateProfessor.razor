@@ -29,7 +29,7 @@
         <div class="row align-items-center">
             <div class="col"></div>
             <div class="col">
-                <h3>Modificar Estudiante</h3>
+                <h3>Modificar Professor</h3>
                 <EditForm Model=professorUpdate>
 
                     <div>
@@ -137,6 +137,7 @@
 
     async Task UpdatedProfessor()
     {
+       
 
         HttpClient client = new HttpClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);

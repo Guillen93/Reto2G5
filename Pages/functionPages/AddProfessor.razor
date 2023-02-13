@@ -151,9 +151,9 @@
                 mail.subject = "Creacion de Usuario";
                 mail.msgBody = " Bienvenidal al sistema " + professorCreate.name + "\n Su cuenta ha sido creada con exito.\n en breve recibira confirmacion de la activacion de su cuenta.";
 
-                string sendMail = "http://localhost:8082/api/sendMail";
+                
                 HttpClient HttpClP = new HttpClient();
-                var responseMP = await HttpClP.PostAsJsonAsync<eMailModel>(sendMail, mail);
+                var responseMP = await HttpClP.PostAsJsonAsync<eMailModel>(Endpoints.SendMail(), mail);
 
                 if (responseMP.IsSuccessStatusCode)
                 {
