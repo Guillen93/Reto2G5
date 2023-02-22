@@ -1,4 +1,9 @@
-﻿<div class="top-row ps- navbar navbar-dark">
+﻿@using Reto2G5.Enum;
+@using Reto2G5.Helpers;
+@using Reto2G5.Interfaces;
+@using Reto2G5.Model;
+@inject NavigationManager NavManager
+<div class="top-row ps- navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href=""><img src="./notix.png" height="35" width="45"/></a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -7,46 +12,77 @@
     </div>
 </div>
 
+
+@if (_isVisible)
+{
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <nav class="flex-column">
-            <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                    <span class="oi oi-home" aria-hidden="true"></span> LOGOUT
+        <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/" @onclick="Toggle" Match="NavLinkMatch.All">
+                    <span class="oi oi-home" aria-hidden="true" ></span>LOGOUT
             </NavLink>
         </div>
-        
+
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/fetchProfessordetails">
+            <NavLink class="nav-link" href="/fetchProfessordetails" >
                 <span class="oi oi-plus" aria-hidden="true"></span> PROFESORES
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="/fetchstudentdetails">
-                    <span class="oi oi-plus" aria-hidden="true"></span>STUDENTS
+                <span class="oi oi-plus" aria-hidden="true"></span>STUDENTS
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="/fetchuserdetails">
-                    <span class="oi oi-plus" aria-hidden="true"></span> USERS
+                <span class="oi oi-plus" aria-hidden="true"></span> USERS
             </NavLink>
         </div>
-        
-      
-       </nav>
+
+
+    </nav>
 </div>
 
+}
+
+
 @code {
+    [Inject]
+    private ILocalStorage localStorage { get; set; }
+
+    UserResponse userLocal = new UserResponse();
+
+    
+    private bool _isVisible = true;
 
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
+    protected override async Task OnInitializedAsync()
+    {
+        userLocal = IsDataNull.CreateInstanceIFIsNull<UserResponse>(await localStorage.GetValue<UserResponse>(ValuesKeys.Objeto));
+
+        
+    }
+
     private async void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
-   
+
+        @if (@userLocal.dni == null)
+        {
+            _isVisible = false;
+        }
+
+    }
+
+
+    private void Toggle()
+    {
+
+        NavManager.NavigateTo("/", true);
     }
    
-
 
 }

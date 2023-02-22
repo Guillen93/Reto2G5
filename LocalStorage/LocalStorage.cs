@@ -24,6 +24,7 @@ namespace Reto2G5.LocalStorage
         public async Task ClearAll()
         {
             await JSRuntime.InvokeVoidAsync($"{tipoDeAlmacenamiento}clear").ConfigureAwait(false);
+            
         }
 
         public async Task<T> GetValue<T>(ValuesKeys key)

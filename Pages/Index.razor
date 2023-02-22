@@ -69,8 +69,8 @@
                     mostrar
                 </button>
             </div>
-            <p>@errorMessage</p>
-            <p>@userResponse.accessToken</p>
+           @* <p>@errorMessage</p>
+            <p>@userResponse.accessToken</p>*@
           
     </div>
     
@@ -89,7 +89,7 @@
     String errorMessage;
     protected override async Task OnInitializedAsync()
     {
-        
+
         localStorage.ClearAll();
 
     }
@@ -111,7 +111,7 @@
                 {
                     localStorage.SetValue<UserResponse>(ValuesKeys.Objeto, userResponse);
                     
-                    NavManager.NavigateTo("/fetchuserDisabled");
+                    NavManager.NavigateTo("/fetchuserDisabled" , forceLoad:true);
                 }
                 else
                 {
@@ -150,4 +150,8 @@
 			}
 
 
+    private void refresh()
+    {
+        NavManager.NavigateTo("/", forceLoad: true);
     }
+}
