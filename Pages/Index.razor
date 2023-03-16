@@ -105,23 +105,30 @@
 
             userResponse = JsonSerializer.Deserialize<UserResponse>(response.Content.ReadAsStringAsync().Result);
             List<RoleModel> roles = userResponse.roles;
+
+
             foreach (var rol in roles)
             {
                 if (rol.role.Equals("Admin"))
                 {
                     localStorage.SetValue<UserResponse>(ValuesKeys.Objeto, userResponse);
-                    
-                    NavManager.NavigateTo("/fetchuserDisabled" , forceLoad:true);
+
+                    NavManager.NavigateTo("/fetchuserDisabled", forceLoad: true);
+                }
+                else if (rol.role.Equals("Professor"))
+                {
+                    localStorage.SetValue<UserResponse>(ValuesKeys.Objeto, userResponse);
+
+                    NavManager.NavigateTo("/fetchChoseSubjectByProfessor", forceLoad: true);
                 }
                 else
                 {
                     errorMessage = " no tienes permiso para entrar ";
                 }
+
+
             }
-            
 
-
-           
             return userResponse;
 
         }
@@ -131,6 +138,7 @@
             if (((int)response.StatusCode) == 401)
             {
                 errorMessage = "Incorrect user or password";
+                Console.WriteLine("No tienes permiso");
             }
             else
             {

@@ -1,0 +1,241 @@
+﻿@page "/fetchstudentsByProfessor"
+
+@using Reto2G5.Enum;
+@using Reto2G5.Helpers;
+@using Reto2G5.Interfaces;
+@using Reto2G5.Model;
+@using System.Net.Http.Headers;
+@using Reto2G5.componets;
+@inject HttpClient Http
+@inject NavigationManager NavManager
+@using System.Text.Json;
+@using System.Text.Json.Serialization;
+@using System.Net;
+@using System.Text;
+@using System.Net.Http;
+
+<h1>Students By Professor</h1>
+<p></p>
+<div class="row">
+    @*<div class="col-md-6">
+        <a href='/student/add' class="btn btn-success btn-sm" role="button">
+            <i class="fas fa-user-plus"></i>
+            Add Student
+        </a>
+    </div>*@
+
+    <div class="input-group col">
+        <input type="text" class="form-control" placeholder="Search user by name"
+               @bind="SearchString" @bind:event="oninput" @onkeyup="FilterUser" />
+        @if (SearchString.Length > 0)
+        {
+            <div class="input-group-append">
+                <button class="btn btn-danger" @onclick="ResetSearch">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        }
+    </div>
+</div>
+<br />
+@if (studentList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-striped align-middle table-bordered">
+        <thead class="table-success">
+            <tr>
+                <th>photo</th>
+                <th>Student dni</th>
+                <th>name</th>
+                <th>surname</th>
+                <th>borndate</th>
+                <th>nationality</th>
+                <th>email</th>
+                <th>phone</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in studentList.Skip((CurrentPage - 1) * PageSize).Take(PageSize))
+            {
+                <tr>
+                    <th><img src="data:image/jpeg;base64,@student.photo" width="100" height="100"></th>
+                    <th>@student.studentDni</th>
+                    <th>@student.name</th>
+                    <th>@student.surname</th>
+                    <th>@student.bornDate</th>
+                    <th>@student.nationality</th>
+                    <th>@student.email</th>
+                    <th>@student.phone</th>
+                    
+                    <td><button type="button" class="btn btn-outline-danger" @onclick="() => OpenDeleteDialog(student)">Delete</button></td>
+                    <td><button type="button" class="btn btn-warning btn-sm" @onclick="() =>GoUpdate(student)">Update</button></td>
+                </tr>
+            }
+        </tbody>
+
+    </table>
+
+@*    <Paginacion CurrentPage="@CurrentPage" PageSize="@PageSize" TotalPages="@TotalPages" ></Paginacion>*@
+
+    <nav>
+        <ul class="pagination">
+            <li class="page-item @(CurrentPage == 1 ? "disabled" : "")">
+                <a class="page-link" href="/fetchstudentsByProfessor" @onclick="(e) => PreviousPage()">Previous</a>
+            </li>
+            <li class="page-item @(CurrentPage == TotalPages ? "disabled" : "")">
+                <a class="page-link" href="/fetchstudentsByProfessor" @onclick="(e) => NextPage()">Next</a>
+            </li>
+        </ul>
+    </nav>
+
+    @if (DeleteDialogOpen)
+    {
+        <ModalDialog Title="¿Estas Seguro?" Text="¿Quieres borrar el usuario?" OnClose="OnDeleteDialogClose"></ModalDialog>
+    }
+
+}
+@code {
+    [Inject]
+    private ILocalStorage localStorage { get; set; }
+    UserResponse userLocal = new UserResponse();
+    protected List<StudentModel>? studentList = new();
+    protected List<StudentModel>? searchUserData = new();
+
+    public bool DeleteDialogOpen { get; set; }
+    private StudentModel? _studentModelToDelete;
+    protected string SearchString { get; set; } = string.Empty;
+
+    private int PageSize = 2;
+    private int CurrentPage { get; set; } = 1;
+    private int TotalPages => (int)Math.Ceiling(studentList.Count / (double)PageSize);
+
+    protected override async Task OnInitializedAsync()
+    {
+        userLocal = IsDataNull.CreateInstanceIFIsNull<UserResponse>(await localStorage.GetValue<UserResponse>(ValuesKeys.Objeto));
+        await GetStudent();
+
+    }
+
+
+    protected async Task GetStudent()
+    {
+        Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
+        studentList = await Http.GetFromJsonAsync<List<StudentModel>>(Endpoints.GetStudentsByProfessorDni(userLocal.dni));
+
+        searchUserData = studentList;
+
+    }
+
+
+    protected void FilterUser()
+    {
+        if (!string.IsNullOrEmpty(SearchString))
+        {
+            studentList = searchUserData
+                .Where(x => x.name.IndexOf(SearchString, StringComparison.OrdinalIgnoreCase) != -1)
+                .ToList();
+        }
+        else
+        {
+            studentList = searchUserData;
+        }
+    }
+
+    public void ResetSearch()
+    {
+        SearchString = string.Empty;
+        studentList = searchUserData;
+    }
+
+    private async Task OnDeleteDialogClose(bool accepted)
+    {
+        if (accepted)
+        {
+            string dni = _studentModelToDelete.studentDni;
+            var response = await Http.DeleteAsync(Endpoints.DeleteStudent(dni));
+
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("se ha borrado el estudiante");
+
+
+                Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
+
+                HttpResponseMessage responseDel = await Http.DeleteAsync(Endpoints.DeleteUsers(dni));
+
+                if (responseDel.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("ha borrado el usuario");
+                }
+                else
+                {
+
+                    if (((int)responseDel.StatusCode) == 409)
+                    {
+                        Console.WriteLine("usuario ya existe");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Something went wrong");
+                    }
+                }
+            }
+            else
+            {
+
+                if (((int)response.StatusCode) == 401)
+                {
+                    Console.WriteLine("Incorrect user or password");
+                }
+                else
+                {
+                    Console.WriteLine("Something went wrong");
+
+                }
+            }
+            _studentModelToDelete = null;
+
+
+        }
+
+        DeleteDialogOpen = false;
+        StateHasChanged();
+        NavManager.NavigateTo("/fetchstudentsByProfessor", forceLoad: true);
+    }
+
+    private void OpenDeleteDialog(StudentModel studentModel)
+    {
+        DeleteDialogOpen = true;
+        _studentModelToDelete = studentModel;
+        StateHasChanged();
+    }
+
+    public void PreviousPage()
+    {
+        if (CurrentPage > 1)
+        {
+            CurrentPage--;
+        }
+    }
+
+    public void NextPage()
+    {
+        if (CurrentPage < TotalPages)
+        {
+            CurrentPage++;
+        }
+    }
+
+
+    private void GoUpdate(StudentModel studentModel)
+    {
+        string dni = studentModel.studentDni;
+
+        NavManager.NavigateTo("/student/update?dni=" + dni);
+    }
+
+}

@@ -1,0 +1,113 @@
+﻿@page "/fetchChoseSubjectByProfessor"
+@using Reto2G5.Enum;
+@using Reto2G5.Helpers;
+@using Reto2G5.Interfaces;
+@using Reto2G5.Model;
+@using System.Net.Http.Headers;
+@using Reto2G5.componets;
+@using System.Text.Json;
+@using System.Text.Json.Serialization;
+@using System.Net;
+@using System.Text;
+@using System.Net.Http;
+
+@inject HttpClient Http
+@inject NavigationManager NavManager
+
+
+<h1>Pofessors Subjects </h1>
+<h3>Selecione la asignatura para los alumnos que dispone de la misma </h3>
+<p></p>
+<div class="row">
+
+    <div class="input-group col">
+        <input type="text" class="form-control" placeholder="Search user by name"
+               @bind="SearchString" @bind:event="oninput" @onkeyup="FilterUser" />
+        @if (SearchString.Length > 0)
+        {
+            <div class="input-group-append">
+                <button class="btn btn-danger" @onclick="ResetSearch">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        }
+    </div>
+</div>
+<br />
+@if (subjectList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+       <div class="cajaBotones" style="display: flex;
+    flex-direction: column;">
+
+            @foreach (var subject in subjectList)
+            {
+                         <br/>
+                        <a href='/student/add' class="btn btn-outline-success" role="button">
+                        <i class="fas fa-user-plus"></i>
+                        @subject.name
+                        </a>
+                    
+            }
+    </div>
+
+
+   
+}
+@code {
+    [Inject]
+    private ILocalStorage localStorage { get; set; }
+    UserResponse userLocal = new UserResponse();
+    protected List<SubjectModel> subjectList = new();
+    protected List<SubjectModel> searchUserData = new();
+
+    protected string SearchString { get; set; } = string.Empty;
+
+    private int PageSize = 3;
+    private int CurrentPage { get; set; } = 1;
+    private int TotalPages => (int)Math.Ceiling(subjectList.Count / (double)PageSize);
+
+    protected override async Task OnInitializedAsync()
+    {
+        userLocal = IsDataNull.CreateInstanceIFIsNull<UserResponse>(await localStorage.GetValue<UserResponse>(ValuesKeys.Objeto));
+        await GetSubjectsByProfessorDni();
+
+    }
+
+
+    protected async Task GetSubjectsByProfessorDni()
+    {
+        HttpClient client = new HttpClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
+        subjectList = await client.GetFromJsonAsync<List<SubjectModel>>(Endpoints.GetSubjectsByProfessorDni(userLocal.dni));
+
+        searchUserData = subjectList;
+
+    }
+
+
+    protected void FilterUser()
+    {
+        if (!string.IsNullOrEmpty(SearchString))
+        {
+
+            subjectList = searchUserData
+                .Where(x => x.name.IndexOf(SearchString, StringComparison.OrdinalIgnoreCase) != -1)
+                .ToList();
+        }
+        else
+        {
+            subjectList = searchUserData;
+        }
+    }
+
+    public void ResetSearch()
+    {
+        SearchString = string.Empty;
+        subjectList = searchUserData;
+    }
+
+}
