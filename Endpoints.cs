@@ -40,6 +40,12 @@ namespace Reto2G5
         {
             return "http://localhost:8082/api/students/professor/"+dni;
         }
+        public static string GetStudentsByProfessorDniAndSubjectId(int subjectId, String dni)
+        {
+            return "http://localhost:8082/api/students/subjects/" + subjectId + "/professorDni/" + dni;
+
+        }
+
         public static string GetStudentsByDni(String dni)
         {
             return "http://localhost:8082/api/students/"+dni;

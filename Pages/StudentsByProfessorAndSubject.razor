@@ -14,15 +14,11 @@
 @using System.Text;
 @using System.Net.Http;
 
-<h1>Students By Professor</h1>
+@using System.Web;
+
+<h2>Alumnos del profesor</h2>
 <p></p>
 <div class="row">
-    @*<div class="col-md-6">
-        <a href='/student/add' class="btn btn-success btn-sm" role="button">
-            <i class="fas fa-user-plus"></i>
-            Add Student
-        </a>
-    </div>*@
 
     <div class="input-group col">
         <input type="text" class="form-control" placeholder="Search user by name"
@@ -70,8 +66,7 @@ else
                     <th>@student.nationality</th>
                     <th>@student.email</th>
                     <th>@student.phone</th>
-                    
-                    <td><button type="button" class="btn btn-outline-danger" @onclick="() => OpenDeleteDialog(student)">Delete</button></td>
+         
                     <td><button type="button" class="btn btn-warning btn-sm" @onclick="() =>GoUpdate(student)">Update</button></td>
                 </tr>
             }
@@ -92,11 +87,7 @@ else
         </ul>
     </nav>
 
-    @if (DeleteDialogOpen)
-    {
-        <ModalDialog Title="¿Estas Seguro?" Text="¿Quieres borrar el usuario?" OnClose="OnDeleteDialogClose"></ModalDialog>
-    }
-
+ 
 }
 @code {
     [Inject]
@@ -105,8 +96,11 @@ else
     protected List<StudentModel>? studentList = new();
     protected List<StudentModel>? searchUserData = new();
 
-    public bool DeleteDialogOpen { get; set; }
-    private StudentModel? _studentModelToDelete;
+    [Inject]
+    public NavigationManager MyNavigationManager { get; set; } = default!;
+    private int subjectId;
+
+
     protected string SearchString { get; set; } = string.Empty;
 
     private int PageSize = 2;
@@ -116,15 +110,20 @@ else
     protected override async Task OnInitializedAsync()
     {
         userLocal = IsDataNull.CreateInstanceIFIsNull<UserResponse>(await localStorage.GetValue<UserResponse>(ValuesKeys.Objeto));
-        await GetStudent();
+        Uri url = new Uri(MyNavigationManager.Uri);
+        subjectId = Int32.Parse(HttpUtility.ParseQueryString(url.Query).Get("SubjectId"));
+        await GetSubjectsByProfessorDniAndSubjectId(subjectId);
+        
 
     }
 
 
-    protected async Task GetStudent()
+
+    protected async Task GetSubjectsByProfessorDniAndSubjectId(int subjectId)
     {
+       
         Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
-        studentList = await Http.GetFromJsonAsync<List<StudentModel>>(Endpoints.GetStudentsByProfessorDni(userLocal.dni));
+        studentList = await Http.GetFromJsonAsync<List<StudentModel>>(Endpoints.GetStudentsByProfessorDniAndSubjectId(subjectId, userLocal.dni));
 
         searchUserData = studentList;
 
@@ -151,68 +150,7 @@ else
         studentList = searchUserData;
     }
 
-    private async Task OnDeleteDialogClose(bool accepted)
-    {
-        if (accepted)
-        {
-            string dni = _studentModelToDelete.studentDni;
-            var response = await Http.DeleteAsync(Endpoints.DeleteStudent(dni));
-
-            if (response.IsSuccessStatusCode)
-            {
-                Console.WriteLine("se ha borrado el estudiante");
-
-
-                Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userLocal.accessToken);
-
-                HttpResponseMessage responseDel = await Http.DeleteAsync(Endpoints.DeleteUsers(dni));
-
-                if (responseDel.IsSuccessStatusCode)
-                {
-                    Console.WriteLine("ha borrado el usuario");
-                }
-                else
-                {
-
-                    if (((int)responseDel.StatusCode) == 409)
-                    {
-                        Console.WriteLine("usuario ya existe");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Something went wrong");
-                    }
-                }
-            }
-            else
-            {
-
-                if (((int)response.StatusCode) == 401)
-                {
-                    Console.WriteLine("Incorrect user or password");
-                }
-                else
-                {
-                    Console.WriteLine("Something went wrong");
-
-                }
-            }
-            _studentModelToDelete = null;
-
-
-        }
-
-        DeleteDialogOpen = false;
-        StateHasChanged();
-        NavManager.NavigateTo("/fetchstudentsByProfessor", forceLoad: true);
-    }
-
-    private void OpenDeleteDialog(StudentModel studentModel)
-    {
-        DeleteDialogOpen = true;
-        _studentModelToDelete = studentModel;
-        StateHasChanged();
-    }
+    
 
     public void PreviousPage()
     {
